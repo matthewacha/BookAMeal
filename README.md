@@ -1,4 +1,5 @@
-#Book-A-Meal#
+__Book-A-Meal__ 
+[![Build Status](https://travis-ci.org/matthewacha/BookAMeal.svg?branch=master)](https://travis-ci.org/matthewacha/BookAMeal)[![Coverage Status](https://coveralls.io/repos/github/matthewacha/BookAMeal/badge.svg?branch=master)](https://coveralls.io/github/matthewacha/BookAMeal?branch=master)
 
 __Description__
 
