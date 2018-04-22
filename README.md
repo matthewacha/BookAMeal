@@ -17,7 +17,7 @@ a. Git
 
 b. python 2.7 or higher
 
-c. Install pip `pip address` or easyinstall `easy address`
+c. Install pip [here](https://pip.pypa.io/en/stable/installing/) 
 
 d. To install virtual environment `pip install virtualenv` for 
 python 2.x `pip3 install virtualenv`
@@ -32,7 +32,7 @@ Linux terminal comes with python preinstalled.
 
 Check what version of python is installed `python -V`.
 
-a. Install pip `pip address` or easyinstall `easy address`
+a. Install pip [here](https://pip.pypa.io/en/stable/installing/)
 
 b. To install virtual environment `pip install virtualenv` for 
 python 2.x `pip3 install virtualenv`
