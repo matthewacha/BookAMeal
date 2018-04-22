@@ -26,7 +26,7 @@ e. To setup virtual environment `virtualenv env`
 
 f. To activate virtual environment `env\Scripts\activate`
 
-__For ubuntu__
+__For Linux__
 
 Linux terminal comes with python preinstalled.
 
