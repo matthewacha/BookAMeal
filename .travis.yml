@@ -5,10 +5,9 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install coverage
-  - pip install nose
 # command to run tests
 script:
   - python manage.py run_test #pip setup.py install
-  - nosetests --with-coverage
+  - python manage.py cover
 after_success:
   - coveralls
