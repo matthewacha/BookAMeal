@@ -6,7 +6,7 @@ from . import meals
 
 mealapi=Api(meals)
 
-class add_meal(Resource):
+class meals(Resource):
     def post(self):
         data = request.get_json()
         user_id=1#this is temporary
@@ -31,5 +31,30 @@ class add_meal(Resource):
             output['meal_id']=meal['meal_id']
             list_meals.append(output)
         return jsonify({"meals":list_meals})
+    
+class single_meal(Resource):
+    def put(self,meal_id):
+        data= request.get_json()
+        prev_meal=[]
+        
+        Idlist = map(int, meal_id.split())
+        meal_id = Idlist[0]
+        
+        for meal in meals_db:
+            if meal['meal_id']==meal_id:
+                output={}
+                output['meal_name']=meal['details'].name
+                output['meal_price']=meal['details'].price
+                output['user_id']=meal['details'].user_id
+                output['meal_id']=meal['meal_id']
+                prev_meal.append(output)
 
-mealapi.add_resource(add_meal, 'meals/')
+        meal=[meal for meal in meals_db if meal['meal_id']==meal_id]
+        if len(meal)>0:
+            meal['details'].name=data['name']
+            meal['details'].price=data['price']
+            return make_response((jsonify({'message':"Successfully updated meal option"})),201) 
+        return make_response((jsonify({'message':"Failed to edit"})),401)
+
+mealapi.add_resource(meals, 'meals/')
+mealapi.add_resource(single_meal, 'meals/<meal_id>')
