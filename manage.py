@@ -21,7 +21,7 @@ def run_test():
 @MANAGER.command
 def cover():
     """runs the unit tests with coverage"""
-    #os.system('coverage run manage.py run_test')
+    os.system('coverage run manage.py run_test')
     os.system('coverage report')
     os.system('coverage html')
 
