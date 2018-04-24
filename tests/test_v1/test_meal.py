@@ -25,5 +25,18 @@ class TestUserApi(unittest.TestCase):
         self.assertIn(u'Meal option already exists, try another', result['message'])
         self.assertEqual(response.status_code, 401)
 
+    def test_get_all_meals(self):
+        """test that all meal options can be retrieved"""
+        self.tester.post('meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='Fries',
+                                                        price=5000)))
+        self.tester.post('meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='Beans',
+                                                        price=5000)))
+        response=self.tester.get('meals/')
+        result=json.loads(response.data.decode())
+        
+        self.assertEqual(len(result['meals']), 2)
+
 if __name__=='__main__':
     unittest.main()
