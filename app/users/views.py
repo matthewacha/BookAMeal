@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, make_response
 from flask_restful import Resource, Api
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import users
-from model import database, User
+from .model import database, User
 
 userapi=Api(users)
 

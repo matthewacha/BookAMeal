@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_script import Manager
-import config
 
 APP = Flask(__name__)
 
