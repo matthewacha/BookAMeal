@@ -1,0 +1,29 @@
+import unittest
+import json
+from app import APP
+
+class TestUserApi(unittest.TestCase):
+    def setUp(self):
+        self.tester = APP.test_client(self)
+
+    def test_create_meal(self):
+        """test that a meal option can be succesfully added"""
+        response= self.tester.post('meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='Fries',
+                                                        price=5000)))
+        result=json.loads(response.data.decode())
+        self.assertIn(u'Successfully added meal option', result['message'])
+        self.assertEqual(response.status_code, 201)
+
+    def test_fail_create_meal(self):
+        """test that a meal option cannot be added if strin price
+        is passed instead of integer"""
+        response= self.tester.post('meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='Fries',
+                                                        price='anim45')))
+        result=json.loads(response.data.decode())
+        self.assertIn(u'Meal option already exists, try another', result['message'])
+        self.assertEqual(response.status_code, 401)
+
+if __name__=='__main__':
+    unittest.main()
