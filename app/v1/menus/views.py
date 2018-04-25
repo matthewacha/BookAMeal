@@ -1,11 +1,11 @@
 import os
 from flask import Flask, jsonify, request, session, make_response, abort
 from flask_restful import Resource, Api
-from app.models import database,meals_db
+from app.models import database,meals_db, menu_db
 from . import menus
 
 menuapi=Api(menus)
-menu_db=[]
+
 
 class menu(Resource):
     def post(self, meal_id):
