@@ -24,25 +24,6 @@ class TestUserApi(unittest.TestCase):
         """make an order"""
         response=self.tester.post('/api/v1/orders/2')
         self.assertIn(u"Successfully sent", response.data)
-
-    def test_get_all_orders(self):
-        """test that a customer can get all orders from menu"""
-        self.tester.post('/api/v1/meals/', content_type='application/json',
-                                   data =json.dumps( dict(name='Chicken',
-                                                        price=15000)))
-        self.tester.post('/api/v1/meals/', content_type='application/json',
-                                   data =json.dumps( dict(name='Beans',
-                                                        price=55000)))
-        self.tester.post('/api/v1/meals/', content_type='application/json',
-                                   data =json.dumps( dict(name='Fish',
-                                                        price=5000)))
-        self.tester.post('/api/v1/menu/1')
-        self.tester.post('/api/v1/menu/2')
-        self.tester.post('/api/v1/orders/2')
-
-        response=self.tester.get('/api/v1/orders')
-        self.assertIn(u"Chicken", response.data)
-        
         
 
 if __name__=="__main__":
