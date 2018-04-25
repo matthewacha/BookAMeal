@@ -12,9 +12,12 @@ class make_order(Resource):
             orders_db.append(menu_meal[0])
             return jsonify({"message":"Successfully sent"})
         return jsonify({"message":"Not successful, try again"})
+    def put(self,meal_id):
+        return
 
 class get_orders(Resource):
     def get(self):
         return jsonify({"orders":orders_db})
+    
 orderapi.add_resource(make_order,'orders/<int:meal_id>')
 orderapi.add_resource(get_orders,'orders')

@@ -19,7 +19,3 @@ class Meal():
     def generate_id(self,number):
         return number+1
 
-class Order():
-    def __init__(self, meal, price):
-        self.meal=meal
-        self.price=price
