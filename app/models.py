@@ -1,6 +1,7 @@
 database=[]
 meals_db=[]
 menu_db=[]
+orders_db=[]
 class User():
     def __init__(self,email,password):
         self.email=email
