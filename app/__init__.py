@@ -13,3 +13,6 @@ APP.register_blueprint(meals)
 
 from app.v1.menus import menus as menus
 APP.register_blueprint(menus)
+
+from app.v1.orders import orders as orders
+APP.register_blueprint(orders)
