@@ -47,8 +47,8 @@ class TestUserApi(unittest.TestCase):
                                    data =json.dumps( dict(name='Beans',
                                                         price=5000)))
         response=self.tester.put('/api/v1/meals/2',content_type='application/json',
-                                  data=json.dumps(dict(name='Beans fries',
-                                                       price=4500)))
+                                  data=json.dumps(dict(name='Beans n fries',
+                                                       price=3500)))
         self.assertIn(u'Successfully updated meal', response.data)
         self.assertEqual(response.status_code, 201)
 
