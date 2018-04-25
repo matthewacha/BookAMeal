@@ -5,8 +5,11 @@ APP = Flask(__name__)
 
 APP.config.from_object("config")
 
-from app.users import users as users
+from app.v1.users import users as users
 APP.register_blueprint(users)
 
-from app.meals import meals as meals
+from app.v1.meals import meals as meals
 APP.register_blueprint(meals)
+
+from app.v1.menus import menus as menus
+APP.register_blueprint(menus)
