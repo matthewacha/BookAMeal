@@ -9,7 +9,7 @@ class TestUserApi(unittest.TestCase):
     def test_successful_signup(self):
         """Test that a user can be signed in"""
         
-        response = self.tester.post('/auth/signup',content_type='application/json',
+        response = self.tester.post('api/v1/auth/signup',content_type='application/json',
                                    data =json.dumps( dict(email='you@gmail.com',
                                                         password='lantern')))
         self.assertIn(u"Successfully signed up",response.data)
@@ -17,10 +17,10 @@ class TestUserApi(unittest.TestCase):
 
     def test_unique_user_signup(self):
         """Test that a unque user can be added"""
-        self.tester.post('/auth/signup',content_type='application/json',
+        self.tester.post('api/v1/auth/signup',content_type='application/json',
                                    data =json.dumps( dict(email='me@gmail.com',
                                                         password='lantern')))
-        response = self.tester.post('/auth/signup',content_type='application/json',
+        response = self.tester.post('api/v1/auth/signup',content_type='application/json',
                                    data =json.dumps( dict(email='me@gmail.com',
                                                         password='lantern')))
         self.assertIn(u"User already exists",response.data)
@@ -29,7 +29,7 @@ class TestUserApi(unittest.TestCase):
     def test_wrong_format_credentials_signup(self):
         """Test that a user cannot be added with wrong email format"""
         
-        response = self.tester.post('/auth/signup',content_type='application/json',
+        response = self.tester.post('api/v1/auth/signup',content_type='application/json',
                                    data =json.dumps( dict(email='you@@gmail.com',
                                                         password='lantern')))
         result = json.loads(response.data.decode())
@@ -37,10 +37,10 @@ class TestUserApi(unittest.TestCase):
         self.assertEqual(response.status_code, 422)
 
     def test_correct_credential_login(self):
-        self.tester.post('/auth/signup',content_type='application/json',
+        self.tester.post('api/v1/auth/signup',content_type='application/json',
                                    data =json.dumps( dict(email='me@gmail.com',
                                                         password='lantern')))
-        login = self.tester.post('/auth/login',content_type='application/json',
+        login = self.tester.post('api/v1/auth/login',content_type='application/json',
                                    data =json.dumps( dict(email='me@gmail.com',
                                                         password='lantern')))
         result = json.loads(login.data.decode())
