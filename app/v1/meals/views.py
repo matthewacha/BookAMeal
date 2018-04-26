@@ -3,11 +3,14 @@ from flask import Flask, jsonify, request, session, make_response, abort
 from flask_restful import Resource, Api
 from app.models import database,meals_db, Meal
 from . import meals
+from app.v1.users.views import token_required
 
 mealapi=Api(meals)
+SECRET_KEY = 'VX-4178-WD-3429-MZ-31'
 
 class meals(Resource):
-    def post(self):
+    @token_required
+    def post(self,current_user):
         data = request.get_json()
         user_id=1#this is temporary
         if isinstance(data['price'],str):
@@ -20,7 +23,8 @@ class meals(Resource):
         meals_db.append(meal_prof)
         return make_response(jsonify({'message':"Successfully added meal option"}),201)
 
-    def get(self):
+    @token_required
+    def get(self,current_user):
         list_meals=[]
         for meal in meals_db:
             output={}
@@ -32,7 +36,8 @@ class meals(Resource):
         return jsonify({"meals":list_meals})
     
 class single_meal(Resource):
-    def put(self,meal_id):
+    @token_required
+    def put(self,current_user,meal_id):
         data=request.get_json()
         meal=[meal for meal in meals_db if meal['meal_id']==meal_id]
         """
@@ -46,7 +51,8 @@ class single_meal(Resource):
             return make_response((jsonify({'message':"Successfully updated meal"})),201) 
         return make_response((jsonify({'message':"Meal option does not exist"})),404)
 
-    def delete(self,meal_id):
+    @token_required
+    def delete(self,current_user,meal_id):
         data=request.get_json()
         """
         if meal[0]["details"].user_id!=user_id:
