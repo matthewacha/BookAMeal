@@ -10,10 +10,10 @@ class make_order(Resource):
         menu_meal=[meal for meal in menu_db if meal['meal_id']==meal_id]
         if len(menu_meal)>0:
             orders_db.append(menu_meal[0])
-            return jsonify({"message":"Successfully sent"})
+            return jsonify({"message":menu_meal[0]})
         return jsonify({"message":"Not successful, try again"})
     def put(self,meal_id):
-        return
+        return jsonify({"message":"Successfully edited"})
 
 class get_orders(Resource):
     def get(self):

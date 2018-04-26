@@ -2,7 +2,7 @@ import unittest
 import json
 from app import APP
 
-class TestUserApi(unittest.TestCase):
+class TestMenu(unittest.TestCase):
     def setUp(self):
         self.tester = APP.test_client(self)
 
@@ -46,4 +46,4 @@ class TestUserApi(unittest.TestCase):
         self.assertIn(u'Beans', response.data)
 
 if __name__=='__main__':
-    unittest.main()
+    unittest.main()#pragma:no cover
