@@ -5,7 +5,7 @@ from . import users
 from app.models import database, User
 import jwt
 import datetime
-import functools.wraps
+from functools import wraps
 
 userapi=Api(users)
 SECRET_KEY = 'VX-4178-WD-3429-MZ-31'
@@ -17,13 +17,13 @@ def token_required(funct):
         if 'access_token' in request.headers:
             token = request.headers['access_token']
             if not token:
-                return jsonify({"message":"Token is missing"}), 401#pragma:no cover
+                return make_response((jsonify({"message":"Token is missing"})),401)#pragma:no cover
             try:
-                data = jwt.decode(token, secret_key)
+                data = jwt.decode(token, SECRET_KEY)
                 user =[user for user in database if user['user_id'] == data["sub"]]
                 current_user = user[0]
             except:
-                return jsonify({"message":"Unauthorized access, please login"}), 401
+                return make_response((jsonify({"message":"Unauthorized access, please login"})),401)
             return funct(current_user, *args, **kwargs)
     return decorated_funct
 
