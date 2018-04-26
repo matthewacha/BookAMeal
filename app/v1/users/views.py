@@ -48,7 +48,8 @@ class signup(Resource):
         """Create object user"""
         user = User(json_data['email'], generate_password_hash(json_data['password']))
         user_profile = {'details':user,
-                        'user_id':user.generate_id(len(database))}
+                        'user_id':user.generate_id(len(database)),
+                        'Admin':False}
 
         """Add user to database"""
         database.append(user_profile)

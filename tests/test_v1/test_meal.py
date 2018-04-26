@@ -23,8 +23,8 @@ class TestMeal(unittest.TestCase):
                                    data =json.dumps( dict(name='Fries',
                                                         price=5000)),
                                    headers =dict(access_token = result['token']))
-        rest=json.loads(response.data.decode())
-        self.assertIn(u'Successfully added meal option', rest["message"])
+        #rest=json.loads(response.data.decode())
+        self.assertIn(u'Successfully added meal option', response.data)
         self.assertEqual(response.status_code, 201)
 
     def test_fail_create_meal(self):
