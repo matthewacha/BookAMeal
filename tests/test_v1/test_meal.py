@@ -27,6 +27,19 @@ class TestMeal(unittest.TestCase):
         self.assertIn(u'Successfully added meal option', response.data)
         self.assertEqual(response.status_code, 201)
 
+    def test_unauthorized_create_meal(self):
+        """test that a meal option cannot be succesfully added"""
+        login_=login(self.tester)
+        response= self.tester.post('api/v1/meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='Fries',
+                                                        price=5000)),
+                                   headers =dict(access_token = u'123456'))
+        #rest=json.loads(response.data.decode())
+        self.assertIn(u'Unauthorized access, please login', response.data)
+        self.assertEqual(response.status_code, 401)
+
+
+
     def test_fail_create_meal(self):
         """test that a meal option cannot be added if strin price
         is passed instead of integer"""

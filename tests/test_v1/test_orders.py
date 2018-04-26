@@ -49,6 +49,24 @@ class TestOrders(unittest.TestCase):
                                   headers =dict(access_token = result['token']))
         self.assertIn(u"Successfully placed order", response.data)
 
+    def test_fail_make_order(self):
+        """test that a customer cannot make an order"""
+        result=login(self.tester)
+        add_meal(self.tester,result)
+        
+        """post to day's menu"""
+        self.tester.post('/api/v1/menu/1',
+                         headers =dict(access_token = result['token']))
+        self.tester.post('/api/v1/menu/2',
+                         headers =dict(access_token = result['token']))
+
+        #make an order
+        self.tester.post('/api/v1/orders/1',
+                                  headers =dict(access_token = result['token']))
+        response=self.tester.post('/api/v1/orders/4',
+                                  headers =dict(access_token = result['token']))
+        self.assertIn(u"Not successful, try again", response.data)
+
     def test_get_all_orders(self):
         """test that a customer can get all orders from menu"""
         result=login(self.tester)
@@ -90,8 +108,29 @@ class TestOrders(unittest.TestCase):
                                   headers =dict(access_token = result['token']))
 
         self.assertIn(u"Successfully deleted", responsev.data)
+
+    def test_fail_delete_orders(self):
+        """tests that an order can be deleted"""
+        result=login(self.tester)
+        add_meal(self.tester,result)
+        #add meals to menu
+        self.tester.post('/api/v1/menu/3',
+                         headers =dict(access_token = result['token']))
+        self.tester.post('/api/v1/menu/2',
+                         headers =dict(access_token = result['token']))
+        
+        self.tester.post('/api/v1/orders/3',
+                                  headers =dict(access_token = result['token']))
+        #orders 
+        self.tester.post('/api/v1/orders/2',
+                                  headers =dict(access_token = result['token']))
+        
+        responsev=self.tester.delete('/api/v1/orders/5',
+                                  headers =dict(access_token = result['token']))
+
+        self.assertIn(u"Order does not exist", responsev.data)
         
 
 
 if __name__=="__main__":
-    unittest.main()
+    unittest.main()#pragma:no cover
