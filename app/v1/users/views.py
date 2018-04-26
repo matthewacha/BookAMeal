@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, make_response
 from flask_restful import Resource, Api
+from flasgger.utils import swag_from
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import users
 from app.models import database, User
@@ -28,6 +29,7 @@ def token_required(funct):
     return decorated_funct
 
 class signup(Resource):
+    @swag_from('../api-docs/v1/signup.yml')
     def post(self):
         json_data = request.get_json()
         """Check that email format is correct"""
@@ -48,8 +50,7 @@ class signup(Resource):
         """Create object user"""
         user = User(json_data['email'], generate_password_hash(json_data['password']))
         user_profile = {'details':user,
-                        'user_id':user.generate_id(len(database)),
-                        'Admin':False}
+                        'user_id':user.generate_id(len(database))}
 
         """Add user to database"""
         database.append(user_profile)
@@ -60,7 +61,7 @@ class login(Resource):
         auth = request.get_json()
         """Check auth is sent"""
         if not auth or not auth['email'] or not auth['password']:
-            return make_response(("Authorize with email and password"), 401)
+            return make_response((jsonify({"message":"Authorize with email and password"})), 401)
 
         """Check that email format is correct"""
         try:
@@ -72,7 +73,7 @@ class login(Resource):
             if len(repeat) >1:
                 return make_response((jsonify({"message":'''Repetition of "@" is not allowed'''})), 422)
         except AttributeError as e:
-            return make_response((jsonify({"message":"Input should be a string"})), 500)
+            return make_response((jsonify({"message":"Input should be a string"})), 401)
 
         """Check if user in databse"""
         user = [user for user in database if user['details'].email.lower() == auth['email'].lower()]
@@ -89,7 +90,7 @@ class login(Resource):
                 "sub": info['user_id']}, SECRET_KEY, algorithm = 'HS256')
             return jsonify({'token':token})
         else:
-            return make_response(("Authorize with correct password"), 401)
+            return make_response((jsonify({"message":"Authorize with correct password"})), 401)
         
 
 

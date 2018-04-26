@@ -24,7 +24,8 @@ class make_order(Resource):
                 orders_db.remove(order)
                 return jsonify({"message":"Successfully deleted"})
         return jsonify({"message":"Order does not exist"})
-    
+
+    @token_required
     def put(self,current_user, meal_id):
         return jsonify({"message":"Successfully edited"})
 
