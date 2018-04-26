@@ -5,9 +5,27 @@ from . import users
 from app.models import database, User
 import jwt
 import datetime
+import functools.wraps
 
 userapi=Api(users)
 SECRET_KEY = 'VX-4178-WD-3429-MZ-31'
+
+def token_required(funct):
+    @wraps(funct)
+    def decorated_funct(*args, **kwargs):
+        token = None
+        if 'access_token' in request.headers:
+            token = request.headers['access_token']
+            if not token:
+                return jsonify({"message":"Token is missing"}), 401#pragma:no cover
+            try:
+                data = jwt.decode(token, secret_key)
+                user =[user for user in database if user['user_id'] == data["sub"]]
+                current_user = user[0]
+            except:
+                return jsonify({"message":"Unauthorized access, please login"}), 401
+            return funct(current_user, *args, **kwargs)
+    return decorated_funct
 
 class signup(Resource):
     def post(self):
