@@ -3,12 +3,14 @@ from flask import Flask, jsonify, request, session, make_response, abort
 from flask_restful import Resource, Api
 from app.models import database,meals_db, menu_db
 from . import menus
+from app.v1.users.views import token_required
 
 menuapi=Api(menus)
 
 
 class menu(Resource):
-    def post(self, meal_id):
+    @token_required
+    def post(self, current_user,meal_id):
         menu_meal=[meal for meal in menu_db if meal['meal_id']==meal_id]
 
         meal=[meal for meal in meals_db if meal['meal_id']==meal_id]
@@ -21,7 +23,8 @@ class menu(Resource):
             return make_response(jsonify({"message":"Successfully added to menu"}),201)
 
 class view_menu(Resource):
-    def get(self):
+    @token_required
+    def get(self,current_user):
         return make_response((jsonify({"menu":menu_db})),201)
 
 menuapi.add_resource(menu, 'menu/<int:meal_id>')
