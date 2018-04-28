@@ -9,3 +9,6 @@ def create_app(dev_state):
     else:
         SQLALCHEMY_TRACK_MODIFICATIONS = False
         SECRET_KEY = 'VX-4178-WD-3429-MZ-31'
+
+if __name__=='__main__':
+    create_app('Development')

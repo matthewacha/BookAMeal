@@ -1,0 +1,46 @@
+Endpoint to register a meal
+---
+tags:
+  - Meal
+parameters:
+  - name: body
+    description: a json object with meal details
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "name"
+        - "price"
+      properties:
+        name:
+          type: "string"
+          example: "Fish and rice"
+        price:
+          type: "integer"
+          example: 5000
+  - name: Authorization
+    description: A json web token to be used for each request
+    type: string
+    in: header
+    required: true
+
+responses:
+  200:
+    description: Meal successfuly created
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Successfully added meal option"
+  401:
+    description: Meal already exists
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal option already exists, try another"

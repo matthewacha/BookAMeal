@@ -1,0 +1,19 @@
+Endpoint to get all orders
+---
+tags:
+  - Order
+parameters:
+  - name: Authorization
+    description: A json web token to be used for each request
+    type: string
+    in: header
+    required: true
+
+responses:
+  200:
+    description: Orders returned
+    schema: 
+      type: object
+      properties:
+        "orders":
+          type: array

@@ -83,25 +83,24 @@
 <p id="n14" class="pln"><a href="#n14">14</a></p>
 <p id="n15" class="stm run hide_run"><a href="#n15">15</a></p>
 <p id="n16" class="stm run hide_run"><a href="#n16">16</a></p>
-<p id="n17" class="pln"><a href="#n17">17</a></p>
+<p id="n17" class="stm run hide_run"><a href="#n17">17</a></p>
 <p id="n18" class="stm run hide_run"><a href="#n18">18</a></p>
-<p id="n19" class="stm run hide_run"><a href="#n19">19</a></p>
-<p id="n20" class="stm mis"><a href="#n20">20</a></p>
-<p id="n21" class="pln"><a href="#n21">21</a></p>
-<p id="n22" class="stm run hide_run"><a href="#n22">22</a></p>
+<p id="n19" class="stm mis"><a href="#n19">19</a></p>
+<p id="n20" class="pln"><a href="#n20">20</a></p>
+<p id="n21" class="stm run hide_run"><a href="#n21">21</a></p>
+<p id="n22" class="pln"><a href="#n22">22</a></p>
 <p id="n23" class="pln"><a href="#n23">23</a></p>
-<p id="n24" class="pln"><a href="#n24">24</a></p>
+<p id="n24" class="stm mis"><a href="#n24">24</a></p>
 <p id="n25" class="stm mis"><a href="#n25">25</a></p>
 <p id="n26" class="stm mis"><a href="#n26">26</a></p>
-<p id="n27" class="stm mis"><a href="#n27">27</a></p>
-<p id="n28" class="pln"><a href="#n28">28</a></p>
-<p id="n29" class="stm run hide_run"><a href="#n29">29</a></p>
+<p id="n27" class="pln"><a href="#n27">27</a></p>
+<p id="n28" class="stm run hide_run"><a href="#n28">28</a></p>
+<p id="n29" class="pln"><a href="#n29">29</a></p>
 <p id="n30" class="pln"><a href="#n30">30</a></p>
-<p id="n31" class="pln"><a href="#n31">31</a></p>
-<p id="n32" class="stm mis"><a href="#n32">32</a></p>
-<p id="n33" class="pln"><a href="#n33">33</a></p>
+<p id="n31" class="stm mis"><a href="#n31">31</a></p>
+<p id="n32" class="pln"><a href="#n32">32</a></p>
+<p id="n33" class="stm run hide_run"><a href="#n33">33</a></p>
 <p id="n34" class="stm run hide_run"><a href="#n34">34</a></p>
-<p id="n35" class="stm run hide_run"><a href="#n35">35</a></p>
 
             </td>
             <td class="text">
@@ -121,25 +120,24 @@
 <p id="t14" class="pln">    <span class="str">"""Runs the unit tests without test coverage."""</span><span class="strut">&nbsp;</span></p>
 <p id="t15" class="stm run hide_run">    <span class="nam">tests</span> <span class="op">=</span> <span class="nam">unittest</span><span class="op">.</span><span class="nam">TestLoader</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">discover</span><span class="op">(</span><span class="str">'./tests'</span> <span class="op">,</span> <span class="nam">pattern</span><span class="op">=</span><span class="str">'test*.py'</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t16" class="stm run hide_run">    <span class="nam">result</span> <span class="op">=</span> <span class="nam">unittest</span><span class="op">.</span><span class="nam">TextTestRunner</span><span class="op">(</span><span class="nam">verbosity</span><span class="op">=</span><span class="num">2</span><span class="op">)</span><span class="op">.</span><span class="nam">run</span><span class="op">(</span><span class="nam">tests</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
-<p id="t17" class="pln">    <span class="com"># os.system('coverage run manage.py run_test')</span><span class="strut">&nbsp;</span></p>
-<p id="t18" class="stm run hide_run">    <span class="key">if</span> <span class="nam">result</span><span class="op">.</span><span class="nam">wasSuccessful</span><span class="op">(</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
-<p id="t19" class="stm run hide_run">        <span class="key">return</span> <span class="num">0</span><span class="strut">&nbsp;</span></p>
-<p id="t20" class="stm mis">    <span class="key">return</span> <span class="num">1</span><span class="strut">&nbsp;</span></p>
-<p id="t21" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t22" class="stm run hide_run"><span class="op">@</span><span class="nam">MANAGER</span><span class="op">.</span><span class="nam">command</span><span class="strut">&nbsp;</span></p>
-<p id="t23" class="pln"><span class="key">def</span> <span class="nam">cover</span><span class="op">(</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
-<p id="t24" class="pln">    <span class="str">"""runs the unit tests with coverage"""</span><span class="strut">&nbsp;</span></p>
-<p id="t25" class="stm mis">    <span class="nam">os</span><span class="op">.</span><span class="nam">system</span><span class="op">(</span><span class="str">'coverage run manage.py run_test'</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
-<p id="t26" class="stm mis">    <span class="nam">os</span><span class="op">.</span><span class="nam">system</span><span class="op">(</span><span class="str">'coverage report'</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
-<p id="t27" class="stm mis">    <span class="nam">os</span><span class="op">.</span><span class="nam">system</span><span class="op">(</span><span class="str">'coverage html'</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
-<p id="t28" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t29" class="stm run hide_run"><span class="op">@</span><span class="nam">MANAGER</span><span class="op">.</span><span class="nam">command</span><span class="strut">&nbsp;</span></p>
-<p id="t30" class="pln"><span class="key">def</span> <span class="nam">run_app</span><span class="op">(</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
-<p id="t31" class="pln">    <span class="str">"""Starts the server and debugs with the shell"""</span><span class="strut">&nbsp;</span></p>
-<p id="t32" class="stm mis">    <span class="nam">APP</span><span class="op">.</span><span class="nam">run</span><span class="op">(</span><span class="nam">debug</span><span class="op">=</span><span class="nam">True</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
-<p id="t33" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t34" class="stm run hide_run"><span class="key">if</span> <span class="nam">__name__</span> <span class="op">==</span> <span class="str">'__main__'</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
-<p id="t35" class="stm run hide_run">    <span class="nam">MANAGER</span><span class="op">.</span><span class="nam">run</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t17" class="stm run hide_run">    <span class="key">if</span> <span class="nam">result</span><span class="op">.</span><span class="nam">wasSuccessful</span><span class="op">(</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t18" class="stm run hide_run">        <span class="key">return</span> <span class="num">0</span><span class="strut">&nbsp;</span></p>
+<p id="t19" class="stm mis">    <span class="key">return</span> <span class="num">1</span><span class="strut">&nbsp;</span></p>
+<p id="t20" class="pln"><span class="strut">&nbsp;</span></p>
+<p id="t21" class="stm run hide_run"><span class="op">@</span><span class="nam">MANAGER</span><span class="op">.</span><span class="nam">command</span><span class="strut">&nbsp;</span></p>
+<p id="t22" class="pln"><span class="key">def</span> <span class="nam">cover</span><span class="op">(</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t23" class="pln">    <span class="str">"""runs the unit tests with coverage"""</span><span class="strut">&nbsp;</span></p>
+<p id="t24" class="stm mis">    <span class="nam">os</span><span class="op">.</span><span class="nam">system</span><span class="op">(</span><span class="str">'coverage run manage.py run_test'</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t25" class="stm mis">    <span class="nam">os</span><span class="op">.</span><span class="nam">system</span><span class="op">(</span><span class="str">'coverage report'</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t26" class="stm mis">    <span class="nam">os</span><span class="op">.</span><span class="nam">system</span><span class="op">(</span><span class="str">'coverage html'</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t27" class="pln"><span class="strut">&nbsp;</span></p>
+<p id="t28" class="stm run hide_run"><span class="op">@</span><span class="nam">MANAGER</span><span class="op">.</span><span class="nam">command</span><span class="strut">&nbsp;</span></p>
+<p id="t29" class="pln"><span class="key">def</span> <span class="nam">run_app</span><span class="op">(</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t30" class="pln">    <span class="str">"""Starts the server and debugs with the shell"""</span><span class="strut">&nbsp;</span></p>
+<p id="t31" class="stm mis">    <span class="nam">APP</span><span class="op">.</span><span class="nam">run</span><span class="op">(</span><span class="nam">debug</span><span class="op">=</span><span class="nam">True</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t32" class="pln"><span class="strut">&nbsp;</span></p>
+<p id="t33" class="stm run hide_run"><span class="key">if</span> <span class="nam">__name__</span> <span class="op">==</span> <span class="str">'__main__'</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t34" class="stm run hide_run">    <span class="nam">MANAGER</span><span class="op">.</span><span class="nam">run</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 
             </td>
         </tr>
@@ -150,7 +148,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.5.1</a>,
-            created at 2018-03-11 01:29
+            created at 2018-04-25 16:11
         </p>
     </div>
 </div>

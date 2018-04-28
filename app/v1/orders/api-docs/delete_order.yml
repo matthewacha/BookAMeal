@@ -1,0 +1,35 @@
+Endpoint to delete an order using an id value
+---
+tags:
+  - Order
+parameters:
+  - name: Authorization
+    description: A json web token to be used for each request
+    type: string
+    in: header
+    required: true
+  - name: id
+    description: The unique id of meal
+    type: string
+    in: path
+    required: true
+
+responses:
+  200:
+    description: Order successfully deleted
+    schema: 
+      type: object
+      properties:
+        "message":
+          type: object
+          enum:
+          - "Successfully deleted"
+  401:
+    description: No order found
+    schema: 
+      type: object
+      properties:
+        "Message":
+          type: string
+          enum:
+            - "Order does not exist"
