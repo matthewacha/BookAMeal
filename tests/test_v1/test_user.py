@@ -53,7 +53,7 @@ class TestUserApi(unittest.TestCase):
                                    data =json.dumps( dict(email='yougmail.com',
                                                         password='lantern')))
         result = json.loads(response.data.decode())
-        self.assertEqual(result['message'], u'Input a valid email')
+        self.assertEqual(result['message'], u'"@" is missing')
         self.assertEqual(response.status_code, 422)
 
     def test_correct_credential_login(self):
@@ -97,23 +97,23 @@ class TestUserApi(unittest.TestCase):
                                                         password='lantern')))
         result = json.loads(response.data.decode())
         self.assertEqual(result['message'], u'''Repetition of "@" is not allowed''')
-        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response.status_code, 401)
 
     def test_wrong_email_end_login(self):
         """Test that a user cannot login with wrong email format"""
         self.tester.post('api/v1/auth/signup',content_type='application/json',
-                                   data =json.dumps( dict(email='me@gmail.com',
+                                   data =json.dumps( dict(email='men@gmail.com',
                                                         password='lantern')))
         
         response = self.tester.post('api/v1/auth/login',content_type='application/json',
-                                   data =json.dumps( dict(email='me@@gmail',
+                                   data =json.dumps( dict(email='men@gmail',
                                                         password='lantern')))
         result = json.loads(response.data.decode())
         self.assertEqual(result['message'], u"Input a valid email")
         self.assertEqual(response.status_code, 401)
 
-    def test_wrong_email_type_login(self):
-        """Test that a user cannot login with wrong email format"""
+    def test_email_missing_character_login(self):
+        """Test that a user cannot login with email missing '@'"""
         self.tester.post('api/v1/auth/signup',content_type='application/json',
                                    data =json.dumps( dict(email='me@gmail.com',
                                                         password='lantern')))
@@ -122,7 +122,7 @@ class TestUserApi(unittest.TestCase):
                                    data =json.dumps( dict(email='mgmail.com',
                                                         password='lantern')))
         result = json.loads(response.data.decode())
-        self.assertEqual(result['message'], u"Input a valid email")
+        self.assertEqual(result['message'], u'"@" is missing')
         self.assertEqual(response.status_code, 401)
 
     def test_non_string_email_type_login(self):
