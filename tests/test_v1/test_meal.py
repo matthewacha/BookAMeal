@@ -69,7 +69,7 @@ class TestMeal(unittest.TestCase):
                                  headers =dict(access_token = resv['token']))
         result=json.loads(response.data.decode())
 
-        self.assertEqual(len(result['meals']), 2)
+        self.assertEqual(len(result['Meals']), 2)
 
     def test_update_meal(self):
         """test that a meal option can be updated"""
