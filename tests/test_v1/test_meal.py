@@ -29,7 +29,6 @@ class TestMeal(unittest.TestCase):
 
     def test_unauthorized_create_meal(self):
         """test that a meal option cannot be succesfully added"""
-        login_=login(self.tester)
         response= self.tester.post('api/v1/meals/', content_type='application/json',
                                    data =json.dumps( dict(name='Fries',
                                                         price=5000)),
@@ -50,7 +49,7 @@ class TestMeal(unittest.TestCase):
                                                         price='anim45')),
                                    headers =dict(access_token = resv['token']))
         result=json.loads(response.data.decode())
-        self.assertIn(u'Meal option already exists, try another', result['message'])
+        self.assertEqual(result['message'], u'Meal option already exists, try another')
         self.assertEqual(response.status_code, 401)
 
     def test_get_all_meals(self):

@@ -1,0 +1,35 @@
+Endpoint to make and order
+---
+tags:
+  - Order
+parameters:
+  - name: Authorization
+    description: A json web token to be used for each request
+    type: string
+    in: header
+    required: true
+  - name: id
+    description: Meal id
+    type: int
+    in: request url
+    required: true
+
+responses:
+  200:
+    description: Order successfuly created
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Successfully placed order"
+  401:
+    description: Order already exists
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Not successful, try again"

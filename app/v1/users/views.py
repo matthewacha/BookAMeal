@@ -29,7 +29,7 @@ def token_required(funct):
     return decorated_funct
 
 class signup(Resource):
-    @swag_from('../api-docs/v1/signup.yml')
+    @swag_from('signup.yml')
     def post(self):
         json_data = request.get_json()
         """Check that email format is correct"""
@@ -57,6 +57,7 @@ class signup(Resource):
         return make_response((jsonify({"message":"Successfully signed up"})), 201)
     
 class login(Resource):
+    @swag_from('login.yml')
     def post(self):
         auth = request.get_json()
         """Check auth is sent"""
@@ -72,7 +73,7 @@ class login(Resource):
             repeat = [char for char in auth['email'] if char == '@']
             if len(repeat) >1:
                 return make_response((jsonify({"message":'''Repetition of "@" is not allowed'''})), 422)
-        except AttributeError as e:
+        except AttributeError:
             return make_response((jsonify({"message":"Input should be a string"})), 401)
 
         """Check if user in databse"""

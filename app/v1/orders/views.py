@@ -1,6 +1,7 @@
 import os
 from flask import Flask, jsonify, request, session, make_response, abort
 from flask_restful import Resource, Api
+from flasgger.utils import swag_from
 from app.models import database, menu_db, orders_db
 from . import orders
 from app.v1.users.views import token_required
@@ -10,6 +11,7 @@ orderapi=Api(orders)
 current_orders=[]
 class make_order(Resource):
     @token_required
+    @swag_from('api-docs/add_order.yml')
     def post(self, current_user, meal_id):
         menu_meal=[meal for meal in menu_db if meal['meal_id']==meal_id]
         if len(menu_meal)>0:
@@ -18,6 +20,7 @@ class make_order(Resource):
         return jsonify({"message":"Not successful, try again"})
 
     @token_required
+    @swag_from('api-docs/delete_order.yml')
     def delete(self,current_user,meal_id):
         for order in orders_db:
             if order["meal_id"]==meal_id:
@@ -31,6 +34,7 @@ class make_order(Resource):
 
 class get_orders(Resource):
     @token_required
+    @swag_from('api-docs/view_orders.yml')
     def get(self,current_user):
         output=[]
         for order in orders_db:

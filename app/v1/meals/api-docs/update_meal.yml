@@ -1,0 +1,35 @@
+Endpoint to update meal information using an id value
+---
+tags:
+  - Meal
+parameters:
+  - name: Authorization
+    description: A json web token to be used for each request
+    type: string
+    in: header
+    required: true
+  - name: id
+    description: The unique id of meal
+    type: string
+    in: path
+    required: true
+
+responses:
+  200:
+    description: Meal detail update successful
+    schema: 
+      type: object
+      properties:
+        "message":
+          type: object
+          enum:
+          - "Successfully updated meal"
+  401:
+    description: No Meal found
+    schema: 
+      type: object
+      properties:
+        "Message":
+          type: string
+          enum:
+            - "Meal option does not exist"

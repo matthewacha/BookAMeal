@@ -1,0 +1,35 @@
+Endpoint to delete a meal from menu using an id value
+---
+tags:
+  - Meal
+parameters:
+  - name: Authorization
+    description: A json web token to be used for each request
+    type: string
+    in: header
+    required: true
+  - name: id
+    description: The unique id of meal
+    type: string
+    in: path
+    required: true
+
+responses:
+  200:
+    description: Menu item successfully deleted
+    schema: 
+      type: object
+      properties:
+        "message":
+          type: object
+          enum:
+          - "Successfully deleted meal"
+  401:
+    description: No order found
+    schema: 
+      type: object
+      properties:
+        "message":
+          type: string
+          enum:
+            - "Failed to delete meal"
