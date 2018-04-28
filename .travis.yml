@@ -5,7 +5,7 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install coverage
-  - pip install --user codecov && codecov -t CODECLIMATE_REPO_TOKEN
+  - pip install --user codecov
 # command to run tests
 script:
   - python manage.py run_test #pip setup.py install
