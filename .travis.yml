@@ -10,5 +10,8 @@ install:
 script:
   - python manage.py run_test #pip setup.py install
   - python manage.py cover
+after_script:
+  - codeclimate-test-reporter
+
 after_success:
   - coveralls
