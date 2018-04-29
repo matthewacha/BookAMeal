@@ -1,0 +1,35 @@
+Endpoint to register a meal
+---
+tags:
+  - Menu
+parameters:
+  - name: Authorization
+    description: A json web token to be used for each request
+    type: string
+    in: header
+    required: true
+  - name: id
+    description: Meal id
+    type: int
+    in: request url
+    required: true
+
+responses:
+  200:
+    description: Meal successfuly deleted from menu
+    schema: 
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Successfully deleted from menu"
+  404:
+    description: Meal does not exist in menu
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          enum:
+            - "Meal does not exist"
