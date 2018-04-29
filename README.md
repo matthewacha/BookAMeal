@@ -77,6 +77,7 @@ __For version_1__
 |[DELETE/api/v1/meals/<meal_id>](http://127.0.0.1:5000/apidocs/#!/delete_api_v1_meals_meal_id)|Caterer can delete a meal|
 |[POST/api/v1/menu/<meal_id>](http://127.0.0.1:5000/apidocs/#!/Meal/post_api_v1_menu_meal_id)|Caterer can add meal option to menu|
 |[GET/api/v1/menu/](http://127.0.0.1:5000/apidocs/#!/Meal/get_api_v1_menu)|Caterer can get a menu|
+|[DELETE/api/v1/menu/<meal_id>](http://127.0.0.1:5000/apidocs/#!/Meal/delete_api_v1_menu_meal_id)|Caterer can delete item from menu|
 |[POST/api/v1/orders/<meal_id>](http://127.0.0.1:5000/apidocs/#!/Meal/post_api_v1_orders_meal_id)|Customer can make an order|
 |[GET/api/v1/orders](http://127.0.0.1:5000/apidocs/#!/Meal/get_api_v1_orders)|Caterer can get all orders|
 |[DELETE/api/v1/orders](http://127.0.0.1:5000/apidocs/#!/Meal/delete_api_v1_orders_meal_id)|Customer can delete an order|
