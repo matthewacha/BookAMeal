@@ -1,13 +1,15 @@
 import unittest
 import json
+import random
 from app import APP
 
 def login(tester):
+    emails=random.choice(['an@gmail.com','me@gmail.com','dou@gmail.com'])
     tester.post('api/v1/auth/signup',content_type='application/json',
-                                   data =json.dumps( dict(email='me@gmail.com',
+                                   data =json.dumps( dict(email=emails,
                                                         password='lantern')))
     login = tester.post('api/v1/auth/login',content_type='application/json',
-                                   data =json.dumps( dict(email='me@gmail.com',
+                                   data =json.dumps( dict(email=emails,
                                                         password='lantern')))
     return login
     
@@ -46,7 +48,7 @@ class TestMeal(unittest.TestCase):
         resv = json.loads(login_.data.decode())
         response= self.tester.post('api/v1/meals/', content_type='application/json',
                                    data =json.dumps( dict(name='Fries',
-                                                        price='anim45')),
+                                                        price=455)),
                                    headers =dict(access_token = resv['token']))
         result=json.loads(response.data.decode())
         self.assertEqual(result['message'], u'Meal option already exists, try another')
