@@ -78,5 +78,52 @@ class TestMenu(unittest.TestCase):
                                  headers =dict(access_token = result['token']))
         self.assertIn(u'Beans', response.data)
 
+    def test_delete_menu_item(self):
+        """test that a meal can be deleted from a menu"""
+        login_=login(self.tester)
+        result = json.loads(login_.data.decode())
+        
+        self.tester.post('/api/v1/meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='Fries',
+                                                        price=5000)),
+                         headers =dict(access_token = result['token']))
+        
+        self.tester.post('/api/v1/meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='Beans',
+                                                        price=5000)),
+                         headers =dict(access_token = result['token']))
+        self.tester.post('/api/v1/meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='Chicken',
+                                                        price=15000)),
+                         headers =dict(access_token = result['token']))
+        self.tester.post('/api/v1/menu/2', headers =dict(access_token = result['token']))
+        self.tester.post('/api/v1/menu/3', headers =dict(access_token = result['token']))
+        response=self.tester.delete('/api/v1/menu/2', headers =dict(access_token = result['token']))
+        self.assertIn(u'Successfully deleted from menu', response.data)
+        self.assertEqual(response.status_code, 200)
+    def test_fail_delete_menu_item(self):
+        """test that a meal cannot be deleted from a menu"""
+        login_=login(self.tester)
+        result = json.loads(login_.data.decode())
+        
+        self.tester.post('/api/v1/meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='Fries',
+                                                        price=5000)),
+                         headers =dict(access_token = result['token']))
+        
+        self.tester.post('/api/v1/meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='Beans',
+                                                        price=5000)),
+                         headers =dict(access_token = result['token']))
+        self.tester.post('/api/v1/meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='Chicken',
+                                                        price=15000)),
+                         headers =dict(access_token = result['token']))
+        self.tester.post('/api/v1/menu/2', headers =dict(access_token = result['token']))
+        self.tester.post('/api/v1/menu/3', headers =dict(access_token = result['token']))
+        response=self.tester.delete('/api/v1/menu/4', headers =dict(access_token = result['token']))
+        self.assertIn(u'Meal does not exist', response.data)
+        self.assertEqual(response.status_code, 404)    
+
 if __name__=='__main__':
     unittest.main()#pragma:no cover
