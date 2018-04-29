@@ -24,6 +24,15 @@ class menu(Resource):
                             "meal_id":meal[0]['meal_id']})
             return make_response(jsonify({"message":"Successfully added to menu"}),201)
 
+    @token_required
+    @swag_from('api-docs/delete_menu.yml')
+    def delete(self, current_user, meal_id):
+        menu_meal=[meal for meal in menu_db if meal['meal_id']==meal_id]
+        if menu_meal:
+            menu_meal.remove(menu_meal[0])
+            return make_response(jsonify({"message":"Successfully deleted from menu"}), 200)
+        return make_response(jsonify({"message":"Meal does not exist"}), 404)
+
 class view_menu(Resource):
     @token_required
     @swag_from('api-docs/view_menu.yml')
