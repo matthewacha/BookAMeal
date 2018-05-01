@@ -8,10 +8,8 @@ from app.v1.users.views import token_required
 
 menuapi=Api(menus)
 
-class Resource(Resource):
-    method_decorators=[token_required]
-
 class menu(Resource):
+    method_decorators=[token_required]
     @swag_from('api-docs/add_menu.yml')
     def post(self, current_user,meal_id):
         menu_meal=[meal for meal in menu_db if meal['meal_id']==meal_id]
@@ -25,6 +23,7 @@ class menu(Resource):
                             "meal_id":meal[0]['meal_id']})
             return make_response(jsonify({"message":"Successfully added to menu"}),201)
 
+    method_decorators=[token_required]
     @swag_from('api-docs/delete_menu.yml')
     def delete(self, current_user, meal_id):
         menu_meal=[meal for meal in menu_db if meal['meal_id']==meal_id]
@@ -34,6 +33,7 @@ class menu(Resource):
         return make_response(jsonify({"message":"Meal does not exist"}), 404)
 
 class view_menu(Resource):
+    method_decorators=[token_required]
     @swag_from('api-docs/view_menu.yml')
     def get(self,current_user):
         return make_response((jsonify({"menu":menu_db})),201)

@@ -1,0 +1,19 @@
+Endpoint to get admin status of a user
+---
+tags:
+  - User
+parameters:
+  - name: Authorization
+    description: A json web token to be used for each request
+    type: string
+    in: header
+    required: true
+
+responses:
+  200:
+    description: Admin status returned
+    schema: 
+      type: object
+      properties:
+        "Admin_status":
+          type: string

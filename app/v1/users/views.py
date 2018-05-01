@@ -92,6 +92,7 @@ class login(Resource):
         
 class Admin(Resource):
     method_decorators=[token_required]
+    @swag_from('api-docs/changeAdmin.yml')
     def put(self, current_user):
         count=0
         for user in database:
@@ -102,8 +103,9 @@ class Admin(Resource):
             return make_response((jsonify({"message":"Admin status set to True"})), 201)
     
     method_decorators=[token_required]
+    @swag_from('api-docs/checkAdmin.yml')
     def get(self,current_user):
-        return make_response((jsonify({"message":current_user["Admin_status"]})), 200)
+        return make_response((jsonify({"Admin_status":current_user["Admin_status"]})), 200)
 
 userapi.add_resource(signup, 'auth/signup')
 userapi.add_resource(login, 'auth/login')
