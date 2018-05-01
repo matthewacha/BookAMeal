@@ -150,6 +150,34 @@ class TestUserApi(unittest.TestCase):
         self.assertEqual(result['message'], u"Authorize with email and password")
         self.assertEqual(response.status_code, 401)
     
+    def test_correct_admin_status_change(self):
+        """tests that a logged in user can set admin to True"""
+        self.tester.post('api/v1/auth/signup',content_type='application/json',
+                                   data =json.dumps( dict(email='me@gmail.com',
+                                                        password='lantern')))
+        login = self.tester.post('api/v1/auth/login',content_type='application/json',
+                                   data =json.dumps( dict(email='me@gmail.com',
+                                                        password='lantern')))
+        result = json.loads(login.data.decode())
+        response = self.tester.put('api/v1/auth/Admin', content_type = 'application/json',
+        data = json.dumps(dict(Admin_status = True)), headers =dict(access_token = result['token']))
+        #result2 = json.loads(response.data.decode())
+        self.assertIn(u'Admin status set to True',response.data)
+        self.assertEqual(response.status_code, 201)
+
+    def test_retrieve_admin_status(self):
+        """tests that a logged in user can check admin status"""
+        self.tester.post('api/v1/auth/signup',content_type='application/json',
+                                   data =json.dumps( dict(email='seme@gmail.com',
+                                                        password='lantern')))
+        login = self.tester.post('api/v1/auth/login',content_type='application/json',
+                                   data =json.dumps( dict(email='seme@gmail.com',
+                                                        password='lantern')))
+        result = json.loads(login.data.decode())
+        response = self.tester.get('api/v1/auth/Admin', headers =dict(access_token = result['token']))
+        #result2 = json.loads(response.data.decode())
+        self.assertIn(u'false',response.data)
+        self.assertEqual(response.status_code, 200)
 
 if __name__=="__main__":
     unittest.main()#pragma:no cover

@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, make_response
+import flask_restful
 from flask_restful import Resource, Api
 from flasgger.utils import swag_from
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,20 +14,23 @@ SECRET_KEY = 'VX-4178-WD-3429-MZ-31'
 
 def token_required(funct):
     @wraps(funct)
-    def decorated_funct(*args, **kwargs):
+    def verify_token(*args, **kwargs):
         token = None
         if 'access_token' in request.headers:
             token = request.headers['access_token']
-            if not token:
-                return make_response((jsonify({"message":"Token is missing"})),401)#pragma:no cover
             try:
                 data = jwt.decode(token, SECRET_KEY)
-                user =[user for user in database if user['user_id'] == data["sub"]]
-                current_user = user[0]
+                current_user = {}
+                for user in database:
+                     if user['user_id'] == data["sub"]:
+                         current_user["user_id"] = user["user_id"]
+                         current_user["Admin_status"] = user["Admin_status"]
+                         current_user["email"] = user["details"].email
             except:
                 return make_response((jsonify({"message":"Unauthorized access, please login"})),401)
             return funct(current_user, *args, **kwargs)
-    return decorated_funct
+        return make_response((jsonify({"message":"Token is missing"})),401) 
+    return verify_token
 
 class signup(Resource):
     @swag_from('signup.yml')
@@ -50,7 +54,8 @@ class signup(Resource):
         """Create object user"""
         user = User(json_data['email'], generate_password_hash(json_data['password']))
         user_profile = {'details':user,
-                        'user_id':user.generate_id(len(database))}
+                        'user_id':user.generate_id(len(database)),
+                        'Admin_status':False}
 
         """Add user to database"""
         database.append(user_profile)
@@ -85,7 +90,23 @@ class login(Resource):
         else:
             return make_response((jsonify({"message":"Authorize with correct password"})), 401)
         
-
+class Admin(Resource):
+    method_decorators=[token_required]
+    @swag_from('api-docs/changeAdmin.yml')
+    def put(self, current_user):
+        count=0
+        for user in database:
+            if user['user_id'] == current_user['user_id']:
+                user['Admin_status'] = request.get_json('Admin_status', user['Admin_status'])
+                count += 1
+        if count == 1:
+            return make_response((jsonify({"message":"Admin status set to True"})), 201)
+    
+    method_decorators=[token_required]
+    @swag_from('api-docs/checkAdmin.yml')
+    def get(self,current_user):
+        return make_response((jsonify({"Admin_status":current_user["Admin_status"]})), 200)
 
 userapi.add_resource(signup, 'auth/signup')
 userapi.add_resource(login, 'auth/login')
+userapi.add_resource(Admin, 'auth/Admin')

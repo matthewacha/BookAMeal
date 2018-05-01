@@ -1,0 +1,21 @@
+Endpoint to update admin status of user
+---
+tags:
+  - User
+parameters:
+  - name: Authorization
+    description: A json web token to be used for each request
+    type: string
+    in: header
+    required: true
+
+responses:
+  200:
+    description: Admin status changed
+    schema: 
+      type: object
+      properties:
+        "message":
+          type: object
+          enum:
+          - "Admin status set to True"

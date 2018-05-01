@@ -69,9 +69,19 @@ __For version_1__
 
 |EndPoint|Functionality|
 |---------|------------|
-|[POST/api/v1/auth/register](#)|Creates a user account|
-|[POST/api/v1/auth/login](#))|Logs in a user|
-|[POST/api/v1/auth/logout](#)|Logs out a user|
+|[POST/api/v1/auth/signup](http://127.0.0.1:5000/apidocs/#!/User/post_api_v1_auth_signup)|Creates a user account|
+|[POST/api/v1/auth/login](http://127.0.0.1:5000/apidocs/#!/User/post_api_v1_auth_login))|Logs in a user|
+|[POST/api/v1/meals/](http://127.0.0.1:5000/apidocs/#!/Meal/post_api_v1_meals)|Caterer can add meal option|
+|[GET/api/v1/meals/](http://127.0.0.1:5000/apidocs/#!/Meal/get_api_v1_meals)|Caterer can get all meal options added|
+|[PUT/api/v1/meals/<meal_id>](http://127.0.0.1:5000/apidocs/#!/Meal/put_api_v1_meals_meal_id)|Caterer can update a meal|
+|[DELETE/api/v1/meals/<meal_id>](http://127.0.0.1:5000/apidocs/#!/delete_api_v1_meals_meal_id)|Caterer can delete a meal|
+|[POST/api/v1/menu/<meal_id>](http://127.0.0.1:5000/apidocs/#!/Meal/post_api_v1_menu_meal_id)|Caterer can add meal option to menu|
+|[GET/api/v1/menu/](http://127.0.0.1:5000/apidocs/#!/Meal/get_api_v1_menu)|Caterer can get a menu|
+|[DELETE/api/v1/menu/<meal_id>](http://127.0.0.1:5000/apidocs/#!/Meal/delete_api_v1_menu_meal_id)|Caterer can delete item from menu|
+|[POST/api/v1/orders/<meal_id>](http://127.0.0.1:5000/apidocs/#!/Meal/post_api_v1_orders_meal_id)|Customer can make an order|
+|[GET/api/v1/orders](http://127.0.0.1:5000/apidocs/#!/Meal/get_api_v1_orders)|Caterer can get all orders|
+|[DELETE/api/v1/orders](http://127.0.0.1:5000/apidocs/#!/Meal/delete_api_v1_orders_meal_id)|Customer can delete an order|
+
 
 
 For more about using the API check 127.0.0.1:5000/apidocs or [`https://bookameal.herokuapp.com/apidocs/`](https://bookameal.herokuapp.com/apidocs/)
