@@ -1,7 +1,6 @@
 """Initialize the app"""
 from flask import Flask
 from flasgger import Swagger
-from flask_script import Manager
 from app.v1.users import users as users
 from app.v1.meals import meals as meals
 from app.v1.menus import menus as menus
