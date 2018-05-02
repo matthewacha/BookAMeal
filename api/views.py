@@ -105,7 +105,13 @@ class MealsCrud(Resource):
     method_decorators=[token_required]
     @swag_from('api-docs/add_meal.yml')
     def post(self, current_user):
-        pass
+        data = request.get_json()
+        meal = Meal.query.filter_by(name=data['name']).first()
+        if not meal:
+            new_meal=Meal(data['name'], data['price'])
+            DB.session.add(new_meal)
+            return make_response(jsonify({"message":"Successfully added meal option"}), 201)
+        return make_response(jsonify({"message":"Meal already exists"}), 400)
 
     method_decorators=[token_required]
     @swag_from('api-docs/get_meals.yml')

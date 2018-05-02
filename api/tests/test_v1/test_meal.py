@@ -1,7 +1,7 @@
 import unittest
 import json
 import random
-from api import APP
+from api import APP, DB
 
 def login(tester):
     emails=random.choice(['an@gmail.com','me@gmail.com','dou@gmail.com'])
@@ -16,6 +16,10 @@ def login(tester):
 class TestMeal(unittest.TestCase):
     def setUp(self):
         self.tester = APP.test_client(self)
+        DB.create_all()
+        DB.session.commit()
+    def tearDown(self):
+        DB.drop_all()
 
 
     def test_create_meal(self):
@@ -23,7 +27,7 @@ class TestMeal(unittest.TestCase):
         login_=login(self.tester)
         result = json.loads(login_.data.decode())
         response= self.tester.post('api/v1/meals/', content_type='application/json',
-                                   data =json.dumps( dict(name='Fries',
+                                   data =json.dumps( dict(name='Lobster',
                                                         price=5000)),
                                    headers =dict(access_token = result['token']))
         self.assertIn(u'Successfully added meal option', response.data)
