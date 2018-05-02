@@ -1,6 +1,6 @@
 import unittest
 import json
-from app import APP
+from api import APP
 
 def login(tester):
     tester.post('api/v1/auth/signup',content_type='application/json',

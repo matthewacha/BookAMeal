@@ -1,10 +1,6 @@
 """Initialize the app"""
 from flask import Flask
 from flasgger import Swagger
-from app.v1.users import users as users
-from app.v1.meals import meals as meals
-from app.v1.menus import menus as menus
-from app.v1.orders import orders as orders
 
 APP = Flask(__name__)
 
@@ -36,14 +32,5 @@ APP.config['SWAGGER'] = {'swagger': '2.0', 'title': 'BookAMeal-api', 'descriptio
 SWAGGER = Swagger(APP)
 
 
+from . import views
 
-APP.register_blueprint(users)
-
-
-APP.register_blueprint(meals)
-
-
-APP.register_blueprint(menus)
-
-
-APP.register_blueprint(orders)

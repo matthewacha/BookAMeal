@@ -1,7 +1,7 @@
 import unittest
 import json
 import random
-from app import APP
+from api import APP
 
 def login(tester):
     emails=random.choice(['an@gmail.com','me@gmail.com','dou@gmail.com'])
