@@ -2,10 +2,15 @@
 import unittest
 import os
 from flask_script import Manager
-from api import APP
+from flask_migrate import Migrate, MigrateCommand
+from api import APP, DB
 
 # create an instance of class that will handle our commands
 MANAGER = Manager(APP)
+
+MIGRATE = Migrate(APP, DB)
+
+MANAGER.add_command('DB', MigrateCommand)
 
 """define our command for testing called "test"
 Usage: python manage.py test"""
