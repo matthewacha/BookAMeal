@@ -102,4 +102,7 @@ wenv/
 .mypy_cache/
 
 # vscode
-.vscode
+.vscode/
+
+# migrations
+migrations/

@@ -1,5 +1,6 @@
 """Initialize the app"""
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger
 
 APP = Flask(__name__)
@@ -30,6 +31,9 @@ APP.config['SWAGGER'] = {'swagger': '2.0', 'title': 'BookAMeal-api', 'descriptio
                     'description': 'Meal request made by clients'}]}
 
 SWAGGER = Swagger(APP)
+
+DB = SQLAlchemy(APP)
+DB.init_app(APP)
 
 
 from . import views
