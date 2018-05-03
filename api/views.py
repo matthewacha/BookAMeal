@@ -29,7 +29,7 @@ def token_required(funct):
     return verify_token
 
 class signup(Resource):
-    @swag_from('signup.yml')
+    #@swag_from('signup.yml')
     def post(self):
         json_data = request.get_json()
         """Check that email format is correct"""
@@ -57,7 +57,7 @@ class signup(Resource):
         return make_response((jsonify({"message":"Successfully signed up"})), 201)
     
 class login(Resource):
-    @swag_from('login.yml')
+   # @swag_from('login.yml')
     def post(self):
         auth = request.get_json()
         if not auth or not auth['email'] or not auth['password']:
@@ -106,21 +106,59 @@ class MealsCrud(Resource):
     @swag_from('api-docs/add_meal.yml')
     def post(self, current_user):
         data = request.get_json()
+        if type(data['price']) == unicode:
+            try:
+                map(int, data['price'].split())
+                return make_response(jsonify({'message':"Please put in an integer"}), 401)
+            except ValueError, IndexError:
+                return make_response(jsonify({'message':"Please put in an integer"}), 401)
         meal = Meal.query.filter_by(name=data['name']).first()
+
         if not meal:
             new_meal=Meal(data['name'], data['price'])
-            DB.session.add(new_meal)
-            return make_response(jsonify({"message":"Successfully added meal option"}), 201)
+            try:
+                DB.session.add(new_meal)
+                DB.session.commit()
+                #testing
+                meals_list=[]
+                meals= Meal.query.all()
+                for meal in meals:
+                    #return make_response(jsonify({"Meals":[meal.user_id,current_user.id]}), 200)
+                    output={}
+                    output['name']=meal.name
+                    output['price'] = meal.price
+                    output['id'] = meal.id
+                    output['userID'] = meal.user_id
+                    meals_list.append(output)
+                return make_response(jsonify({"Meals":meals_list}), 200)
+                return make_response(jsonify({"message":"Successfully added meal option"}), 201)
+            except:
+                return make_response(jsonify({"message":"Error occured try again"}), 401)
+            DB.session.close()
         return make_response(jsonify({"message":"Meal already exists"}), 400)
 
     method_decorators=[token_required]
     @swag_from('api-docs/get_meals.yml')
     def get(self, current_user):
-        pass
+        meals= Meal.query.all()
+        meals_list=[]
+        for meal in meals:
+            if meal.user_id == current_user.id:
+                #return make_response(jsonify({"Meals":[meal.user_id,current_user.id]}), 200)
+                output={}
+                output['name']=meal.name
+                output['price'] = meal.price
+                output['id'] = meal.id
+                output['userID'] = meal.user_id
+                meals_list.append(output)
+            return make_response(jsonify({"Meals":[meal.user_id,current_user.id]}), 200)
+        return make_response(jsonify({"Meals":meals_list}), 200)
+
 class SingleMeal(Resource):
     method_decorators=[token_required]
     @swag_from('api-docs/update_meal.yml')
     def put(self, current_user, meal_id):
+
         pass 
 
     method_decorators=[token_required]
