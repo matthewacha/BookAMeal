@@ -76,10 +76,10 @@ class TestMeal(unittest.TestCase):
     def test_get_all_meals(self):
         """test that all meal options can be retrieved"""
         self.tester.post('api/v1/auth/signup',content_type='application/json',
-                                   data =json.dumps( dict(email="jones@gmail.com",
+                                   data =json.dumps( dict(email="jona@gmail.com",
                                                         password='lantern')))
         login = self.tester.post('api/v1/auth/login',content_type='application/json',
-                                   data =json.dumps( dict(email="jones@gmail.com",
+                                   data =json.dumps( dict(email="jona@gmail.com",
                                                         password='lantern')))
         resv = json.loads(login.data.decode())
         self.tester.post('api/v1/meals/', content_type='application/json',
@@ -94,7 +94,7 @@ class TestMeal(unittest.TestCase):
         response=self.tester.get('api/v1/meals/',headers =dict(access_token = resv['token']))
         result=json.loads(response.data.decode())
 
-        self.assertEqual(len(result["Meals"]), 2)
+        self.assertEqual(result["Meals"], 2)
 
     def test_update_meal(self):
         """test that a meal option can be updated"""
