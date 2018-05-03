@@ -10,4 +10,4 @@ def create_app(dev_state):
         SECRET_KEY = 'VX-4178-WD-3429-MZ-31'
 
 if __name__=='__main__':
-    create_app('Testing')
+    create_app('Development')
