@@ -4,7 +4,7 @@ from flask_restful import Resource, Api
 from flasgger.utils import swag_from
 from werkzeug.security import generate_password_hash, check_password_hash
 from api import APP, DB
-from .models import Meal, User, Menu, Order
+from api.models import Meal, User, Menu, Order, Admin
 import jwt
 import datetime
 from functools import wraps
@@ -28,8 +28,24 @@ def token_required(funct):
         return make_response((jsonify({"message":"Token is missing"})),401) 
     return verify_token
 
+def admin_required(funct):
+    @wraps(funct)
+    def verify_token(*args, **kwargs):
+        token = None
+        if 'K_access_token' in request.headers:
+            token = request.headers['K_access_token']
+            try:
+                data = jwt.decode(token, SECRET_KEY)
+                admin=Admin.query.filter_by(id=data["sub"]).first()
+                current_admin=admin
+            except:
+                return make_response((jsonify({"message":"Unauthorized access, please login"})),401)
+            return funct(current_user, *args, **kwargs)
+        return make_response((jsonify({"message":"Token is missing"})),401) 
+    return verify_token
+    
 class signup(Resource):
-    #@swag_from('signup.yml')
+    @swag_from('api-docs/signup.yml')
     def post(self):
         json_data = request.get_json()
         """Check that email format is correct"""
@@ -53,11 +69,11 @@ class signup(Resource):
         """Add user to database"""
         DB.session.add(new_user)
         DB.session.commit()
-        DB.session.close()
+        #DB.session.close()
         return make_response((jsonify({"message":"Successfully signed up"})), 201)
     
 class login(Resource):
-   # @swag_from('login.yml')
+    @swag_from('api-docs/login.yml')
     def post(self):
         auth = request.get_json()
         if not auth or not auth['email'] or not auth['password']:
@@ -85,21 +101,33 @@ class login(Resource):
         else:
             return make_response((jsonify({"message":"Authorize with correct password"})), 401)
         
-"""class Admin(Resource):
+class admin(Resource):
     method_decorators=[token_required]
     @swag_from('api-docs/changeAdmin.yml')
-    def put(self, current_user):
+    def post(self, current_user):
         user=User.query.filter_by(id = current_user.id).first()
+        admin_user = Admin.query.filter_by(user_id=current_user.id).first()
         if user:
-            pre=user.Admin_status
-            user.Admin_status = True#request.json.get('Admin_status', user.Admin_status)
-            return make_response((jsonify({"message":"Admin status set to true"})), 201)
+            if not admin_user:
+                new_admin = Admin(email = current_user.email, user_id = current_user.id, Admin_status=True)
+                new_admin.save()
+                new_admin.commit()
+                return make_response((jsonify({"message":"User set to admin"})), 201)
+            return make_response((jsonify({"message":"User is already admin"})), 201)
         return make_response((jsonify({"message":"User does not exist"})), 201)
-    
+
+class adminLogin(Resource): 
     method_decorators=[token_required]
     @swag_from('api-docs/checkAdmin.yml')
-    def get(self,current_user):
-        return make_response((jsonify({"Admin_status":current_user.Admin_status})), 200)"""
+    def post(self,current_user):
+        admin_user = Admin.query.filter_by(user_id=current_user.id).first()
+        if admin_user:
+            token = jwt.encode({
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(days = 0, minutes = 45),
+                "iat": datetime.datetime.utcnow(),
+                "sub": admin_user.id}, SECRET_KEY, algorithm = 'HS256')
+            return jsonify({'token':token})
+        return make_response((jsonify({"Admin_status":"Sorry, you are not authorize"})), 401)
 
 class MealsCrud(Resource):
     method_decorators=[token_required]
@@ -115,22 +143,19 @@ class MealsCrud(Resource):
         meal = Meal.query.filter_by(name=data['name']).first()
 
         if not meal:
-            new_meal=Meal(data['name'], data['price'])
+            new_meal=Meal(name=data['name'], price=data['price'])
             try:
                 DB.session.add(new_meal)
                 DB.session.commit()
-                #testing
                 meals_list=[]
                 meals= Meal.query.all()
                 for meal in meals:
-                    #return make_response(jsonify({"Meals":[meal.user_id,current_user.id]}), 200)
                     output={}
                     output['name']=meal.name
                     output['price'] = meal.price
                     output['id'] = meal.id
-                    output['userID'] = meal.user_id
+                    output['menu_id'] = meal.Menu_meal_id
                     meals_list.append(output)
-                return make_response(jsonify({"Meals":meals_list}), 200)
                 return make_response(jsonify({"message":"Successfully added meal option"}), 201)
             except:
                 return make_response(jsonify({"message":"Error occured try again"}), 401)
@@ -149,9 +174,9 @@ class MealsCrud(Resource):
                 output['name']=meal.name
                 output['price'] = meal.price
                 output['id'] = meal.id
-                output['userID'] = meal.user_id
+                output['menu_meal_id'] = meal.Menu_meal_id
                 meals_list.append(output)
-            return make_response(jsonify({"Meals":[meal.user_id,current_user.id]}), 200)
+            #return make_response(jsonify({"Meals":[meal.user_id,current_user.id]}), 200)
         return make_response(jsonify({"Meals":meals_list}), 200)
 
 class SingleMeal(Resource):
@@ -212,4 +237,5 @@ BOOKAPI.add_resource(SingleMeal, '/api/v1/meals/<int:meal_id>')
 
 BOOKAPI.add_resource(signup, '/api/v1/auth/signup')
 BOOKAPI.add_resource(login, '/api/v1/auth/login')
-#BOOKAPI.add_resource(Admin, '/api/v1/auth/Admin')
+BOOKAPI.add_resource(admin, '/api/v1/auth/Admin')
+BOOKAPI.add_resource(adminLogin, '/api/v1/auth/adminLogin')
