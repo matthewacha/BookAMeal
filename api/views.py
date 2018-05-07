@@ -39,11 +39,11 @@ def admin_required(funct):
                 admin=Admin.query.filter_by(id=data["sub"]).first()
                 current_admin=admin
             except:
-                return make_response((jsonify({"message":"Unauthorized access, please login"})),401)
-            return funct(current_user, *args, **kwargs)
-        return make_response((jsonify({"message":"Token is missing"})),401) 
+                return make_response((jsonify({"message":"Unauthorized access, please login as admin"})),401)
+            return funct(current_admin, *args, **kwargs)
+        return make_response((jsonify({"message":"Admin token is missing"})),401) 
     return verify_token
-    
+
 class signup(Resource):
     @swag_from('api-docs/signup.yml')
     def post(self):
@@ -130,9 +130,9 @@ class adminLogin(Resource):
         return make_response((jsonify({"Admin_status":"Sorry, you are not authorize"})), 401)
 
 class MealsCrud(Resource):
-    method_decorators=[token_required]
+    method_decorators=[admin_required]
     @swag_from('api-docs/add_meal.yml')
-    def post(self, current_user):
+    def post(self, current_admin):
         data = request.get_json()
         if type(data['price']) == unicode:
             try:
@@ -143,53 +143,56 @@ class MealsCrud(Resource):
         meal = Meal.query.filter_by(name=data['name']).first()
 
         if not meal:
-            new_meal=Meal(name=data['name'], price=data['price'])
+            new_meal=Meal(name=data['name'], price=data['price'],adminId=current_admin.id)
             try:
                 DB.session.add(new_meal)
                 DB.session.commit()
-                meals_list=[]
-                meals= Meal.query.all()
-                for meal in meals:
-                    output={}
-                    output['name']=meal.name
-                    output['price'] = meal.price
-                    output['id'] = meal.id
-                    output['menu_id'] = meal.Menu_meal_id
-                    meals_list.append(output)
                 return make_response(jsonify({"message":"Successfully added meal option"}), 201)
             except:
                 return make_response(jsonify({"message":"Error occured try again"}), 401)
             DB.session.close()
         return make_response(jsonify({"message":"Meal already exists"}), 400)
 
-    method_decorators=[token_required]
+    method_decorators=[admin_required]
     @swag_from('api-docs/get_meals.yml')
-    def get(self, current_user):
-        meals= Meal.query.all()
+    def get(self, current_admin):
+        meals= Meal.query.filter_by(adminId=current_admin.id).all()
         meals_list=[]
         for meal in meals:
-            if meal.user_id == current_user.id:
-                #return make_response(jsonify({"Meals":[meal.user_id,current_user.id]}), 200)
-                output={}
-                output['name']=meal.name
-                output['price'] = meal.price
-                output['id'] = meal.id
-                output['menu_meal_id'] = meal.Menu_meal_id
-                meals_list.append(output)
+            output={}
+            output['name']=meal.name
+            output['price'] = meal.price
+            output['id'] = meal.id
+            meals_list.append(output)
             #return make_response(jsonify({"Meals":[meal.user_id,current_user.id]}), 200)
         return make_response(jsonify({"Meals":meals_list}), 200)
 
 class SingleMeal(Resource):
-    method_decorators=[token_required]
+    method_decorators=[admin_required]
     @swag_from('api-docs/update_meal.yml')
-    def put(self, current_user, meal_id):
+    def put(self, current_admin, meal_id):
+        meals= Meal.query.filter_by(adminId=current_admin.id).all()
 
-        pass 
+        if meals:
+            for meal in meals:
+                if meal.id == meal_id:
+                    meal.name = request.get_json('name')['name']
+                    meal.price = request.get_json('price')['price']
+                    return make_response(jsonify({"message":"Successfully edited"}), 201)
+            return make_response(jsonify({"message":"Meal option does not exist"}), 404)
 
-    method_decorators=[token_required]
+    method_decorators=[admin_required]
     @swag_from('api-docs/delete_meal.yml')
-    def delete(self, current_user, meal_id):
-        pass
+    def delete(self, current_admin, meal_id):
+        meals= Meal.query.filter_by(adminId=current_admin.id).all()
+
+        if meals:
+            for meal in meals:
+                if meal.id == meal_id:
+                    DB.session.delete(meal)
+                    DB.session.commit()
+                    return make_response(jsonify({"message":"Successfully deleted meal"}), 200)
+        return make_response(jsonify({"message":"Meal does not exist"}), 404)
 
 class menu(Resource):
     method_decorators=[token_required]
