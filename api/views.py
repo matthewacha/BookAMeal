@@ -67,8 +67,8 @@ class signup(Resource):
         new_user = User(email=json_data['email'], password=generate_password_hash(json_data['password']))
 
         """Add user to database"""
-        DB.session.add(new_user)
-        DB.session.commit()
+        new_user.save()
+        new_user.commit()
         #DB.session.close()
         return make_response((jsonify({"message":"Successfully signed up"})), 201)
     
@@ -164,28 +164,25 @@ class MealsCrud(Resource):
             output['price'] = meal.price
             output['id'] = meal.id
             meals_list.append(output)
-            #return make_response(jsonify({"Meals":[meal.user_id,current_user.id]}), 200)
         return make_response(jsonify({"Meals":meals_list}), 200)
 
 class SingleMeal(Resource):
     method_decorators=[admin_required]
     @swag_from('api-docs/update_meal.yml')
     def put(self, current_admin, meal_id):
-        meals= Meal.query.filter_by(adminId=current_admin.id).all()
+        meal= Meal.query.filter_by(adminId=current_admin.id, id=meal_id).first()
 
-        if meals:
-            for meal in meals:
-                if meal.id == meal_id:
-                    meal.name = request.get_json('name')['name']
-                    meal.price = request.get_json('price')['price']
-                    return make_response(jsonify({"message":"Successfully edited"}), 201)
-            return make_response(jsonify({"message":"Meal option does not exist"}), 404)
+        if meal:
+            meal.name = request.get_json('name')['name']
+            meal.price = request.get_json('price')['price']
+            meal.commit()
+            return make_response(jsonify({"message":"Successfully edited"}), 201)
+        return make_response(jsonify({"message":"Meal option does not exist"}), 404)
 
     method_decorators=[admin_required]
     @swag_from('api-docs/delete_meal.yml')
     def delete(self, current_admin, meal_id):
         meals= Meal.query.filter_by(adminId=current_admin.id).all()
-
         if meals:
             for meal in meals:
                 if meal.id == meal_id:
@@ -229,16 +226,16 @@ class get_orders(Resource):
     def get(self,current_user):
         pass
     
-BOOKAPI.add_resource(make_order,'/api/v1/orders/<int:meal_id>')
-BOOKAPI.add_resource(get_orders,'/api/v1/orders')
+BOOKAPI.add_resource(make_order,'/api/v2/orders/<int:meal_id>')
+BOOKAPI.add_resource(get_orders,'/api/v2/orders')
 
-BOOKAPI.add_resource(menu, '/api/v1/menu/<int:meal_id>')
-BOOKAPI.add_resource(view_menu, '/api/v1/menu/')
+BOOKAPI.add_resource(menu, '/api/v2/menu/<int:meal_id>')
+BOOKAPI.add_resource(view_menu, '/api/v2/menu/')
 
-BOOKAPI.add_resource(MealsCrud, '/api/v1/meals/')
-BOOKAPI.add_resource(SingleMeal, '/api/v1/meals/<int:meal_id>')
+BOOKAPI.add_resource(MealsCrud, '/api/v2/meals/')
+BOOKAPI.add_resource(SingleMeal, '/api/v2/meals/<int:meal_id>')
 
-BOOKAPI.add_resource(signup, '/api/v1/auth/signup')
-BOOKAPI.add_resource(login, '/api/v1/auth/login')
-BOOKAPI.add_resource(admin, '/api/v1/auth/Admin')
-BOOKAPI.add_resource(adminLogin, '/api/v1/auth/adminLogin')
+BOOKAPI.add_resource(signup, '/api/v2/auth/signup')
+BOOKAPI.add_resource(login, '/api/v2/auth/login')
+BOOKAPI.add_resource(admin, '/api/v2/auth/Admin')
+BOOKAPI.add_resource(adminLogin, '/api/v2/auth/adminLogin')
