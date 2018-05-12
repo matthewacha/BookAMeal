@@ -6,6 +6,9 @@ from flasgger import Swagger
 APP = Flask(__name__)
 
 APP.config.from_object("config")
+APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+APP.config['SQLALCHEMY_BINDS'] = None
+APP.config['SECRET_KEY'] = 'VX-4178-WD-3429-MZ-31'
 APP.config['SWAGGER'] = {'swagger': '2.0', 'title': 'BookAMeal-api', 'description': "is a \
             web based app that enables caterers to setup menus,view customer \
             orders and also check order history, revenues for specific days", \
@@ -34,6 +37,7 @@ SWAGGER = Swagger(APP)
 
 DB = SQLAlchemy(APP)
 DB.init_app(APP)
+
 
 
 from . import views

@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from api import APP, DB
 from api.models import Meal, User, Menu, Order, Admin
 import jwt
+import re
 import datetime
 from functools import wraps
 
@@ -44,20 +45,60 @@ def admin_required(funct):
         return make_response((jsonify({"message":"Admin token is missing"})),401) 
     return verify_token
 
+def verify_input(funct):
+    @wraps(funct)
+    def dec_funct(*args,**kwargs):
+        auth = request.get_json()
+        if not auth or not auth['email'] or not auth['password']:
+            return make_response((jsonify({"message":"Authorize with email and password"})), 401)
+        if isinstance(auth['email'], int):
+            return make_response((jsonify({"message":"Please input a string"})), 401)
+        if auth['email'].strip() == '':
+            return make_response(jsonify({'message':"You cannot send an empty string"}), 401)
+        if isinstance(auth['password'],unicode):
+            if auth['password'].strip() == '':
+                return make_response(jsonify({'message':"You cannot send an empty string"}), 401)
+        if '@' not in auth['email'][:-4]:
+            return make_response((jsonify({"message":'''"@" is missing'''})), 401)
+        if auth['email'].lower().endswith('.com') is False:
+            return make_response((jsonify({"message":"Input a valid email"})), 401)
+        repeat = [char for char in auth['email'] if char == '@']
+        if len(repeat) > 1:
+            return make_response((jsonify({"message":'''Repetition of "@" is not allowed'''})), 401)
+        if len(auth['email'])>60:
+            return make_response((jsonify({"message":"Email should be less than 60 characters"})), 401)
+        return funct(*args, **kwargs)
+    return dec_funct
+
+def verify_meal():
+    response = None
+    characters= re.compile('[!#$%&*+-.^_`|~:<>,0-9]')
+    data1 = request.get_json('name')
+    data2 = request.get_json('price')
+    if not data1['name'] and not data2['price']:
+        return make_response(jsonify({'message':"Please send a json object containing name and price"}), 401)
+    if type(data2['price']) == unicode:
+        try:
+            map(int, data2['price'].split())
+            return make_response(jsonify({'message':"Please put in an integer"}), 401)
+        except ValueError:
+            return make_response(jsonify({'message':"Please put in an integer"}), 401)
+    if type(data1['name']) != unicode:
+        return make_response(jsonify({'message':"Please input a string"}), 401)
+    if characters.match(data1['name']):
+        return make_response(jsonify({'message':"None alpha-numeric input"}), 401)
+    if data1['name'].strip() == '':
+        return make_response(jsonify({'message':"You cannot have whitespaces"}), 401)
+            
+    
+    return response
 class signup(Resource):
+    method_decorators = [verify_input]
     @swag_from('api-docs/signup.yml')
     def post(self):
         json_data = request.get_json()
-        """Check that email format is correct"""
-        if json_data['email'].lower().endswith('.com') is False:
-            return make_response((jsonify({"message":"Input a valid email"})), 422)
-        if '@' not in json_data['email'][:-4]:
-            return make_response((jsonify({"message":'''"@" is missing'''})), 422)
-        repeat = [char for char in json_data['email'] if char == '@']
-        if len(repeat) >1:
-            return make_response((jsonify({"message":'''Repetition of "@" is not allowed'''})), 422)
-
         """Check that user is unique"""
+        
         user=User.query.filter_by(email=json_data['email'].lower()).first()
 
         if user:
@@ -69,24 +110,13 @@ class signup(Resource):
         """Add user to database"""
         new_user.save()
         new_user.commit()
-        #DB.session.close()
         return make_response((jsonify({"message":"Successfully signed up"})), 201)
     
 class login(Resource):
+    method_decorators = [verify_input]
     @swag_from('api-docs/login.yml')
     def post(self):
         auth = request.get_json()
-        if not auth or not auth['email'] or not auth['password']:
-            return make_response((jsonify({"message":"Authorize with email and password"})), 401)
-        if isinstance(auth['email'], int):
-            return make_response((jsonify({"message":"Input should be a string"})), 401)
-        if '@' not in auth['email'][:-4]:
-            return make_response((jsonify({"message":'''"@" is missing'''})), 401)
-        if auth['email'].lower().endswith('.com') is False:
-            return make_response((jsonify({"message":"Input a valid email"})), 401)
-        repeat = [char for char in auth['email'] if char == '@']
-        if len(repeat) > 1:
-            return make_response((jsonify({"message":'''Repetition of "@" is not allowed'''})), 401)
         """Verify user in database and password matches"""
         user=User.query.filter_by(email=auth['email'].lower()).first()
         if not user:
@@ -113,7 +143,6 @@ class admin(Resource):
                 new_admin.commit()
                 return make_response((jsonify({"message":"User set to admin"})), 201)
             return make_response((jsonify({"message":"User is already admin"})), 201)
-        return make_response((jsonify({"message":"User does not exist"})), 201)
 
 class adminLogin(Resource): 
     method_decorators=[token_required]
@@ -126,30 +155,24 @@ class adminLogin(Resource):
                 "iat": datetime.datetime.utcnow(),
                 "sub": admin_user.id}, SECRET_KEY, algorithm = 'HS256')
             return jsonify({'token':token})
-        return make_response((jsonify({"Admin_status":"Sorry, you are not authorize"})), 401)
+        return make_response((jsonify({"message":"Sorry, you are not authorized"})), 401)
 
 class MealsCrud(Resource):
     method_decorators=[admin_required]
     @swag_from('api-docs/add_meal.yml')
     def post(self, current_admin):
+        response =verify_meal()
+        if response:
+            return response
         data = request.get_json()
-        if type(data['price']) == unicode:
-            try:
-                map(int, data['price'].split())
-                return make_response(jsonify({'message':"Please put in an integer"}), 401)
-            except ValueError:
-                return make_response(jsonify({'message':"Please put in an integer"}), 401)
+        
         meal = Meal.query.filter_by(name=data['name']).first()
 
         if not meal:
             new_meal=Meal(name=data['name'], price=data['price'],adminId=current_admin.id)
-            try:
-                DB.session.add(new_meal)
-                DB.session.commit()
-                return make_response(jsonify({"message":"Successfully added meal option"}), 201)
-            except:
-                return make_response(jsonify({"message":"Error occured try again"}), 401)
-            DB.session.close()
+            DB.session.add(new_meal)
+            DB.session.commit()
+            return make_response(jsonify({"message":"Successfully added meal option"}), 201)
         return make_response(jsonify({"message":"Meal already exists"}), 400)
 
     method_decorators=[admin_required]
@@ -169,8 +192,10 @@ class SingleMeal(Resource):
     method_decorators=[admin_required]
     @swag_from('api-docs/update_meal.yml')
     def put(self, current_admin, meal_id):
+        response =verify_meal()
+        if response:
+            return response
         meal= Meal.query.filter_by(adminId=current_admin.id, id=meal_id).first()
-
         if meal:
             meal.name = request.get_json('name')['name']
             meal.price = request.get_json('price')['price']
@@ -195,8 +220,8 @@ class MenuCrud(Resource):
     @swag_from('api-docs/add_menu.yml')
     def post(self,current_admin, meal_id):
         data = request.get_json()
-        menu_meal = Menu.query.filter_by(name=data['menuName'], mealId=meal_id).all()
-
+        menu_meal = Menu.query.filter_by(name=data['menuName'], mealId=meal_id).first()
+        
         if menu_meal:
             return make_response(jsonify({"message":"Meal option already exists in menu"}), 404)
         else:
@@ -204,8 +229,7 @@ class MenuCrud(Resource):
             menu_item.save()
             menu_item.commit()
             return make_response(jsonify({"message":"Successfully added to menu"}), 201)
-
-        return make_response(jsonify({"message":"Meal option does not exist"}), 404)
+        
 class delMenu(Resource):        
     method_decorators=[admin_required]
     @swag_from('api-docs/delete_menu.yml')
@@ -242,25 +266,77 @@ class view_menu(Resource):
         return make_response(jsonify({"message":"Menu does not exist"}), 404)
 
 class make_order(Resource):
-    @token_required
+    method_decorators=[token_required]
     @swag_from('api-docs/add_order.yml')
-    def post(self, current_user, meal_id):
-        pass
+    def post(self, current_user, menuName, meal_id):
+        menus=Menu.query.filter_by(name=menuName).first()
+        if menus:
+            menu_meal = Menu.query.filter_by(name=menuName, mealId=meal_id).first()
+            if menu_meal:
+                order =Order(menuName=menuName,mealId = meal_id, adminId =menu_meal.owner_id, time_created = datetime.datetime.today().strftime('%d.%m.%y %H.%M.%S'),customer_id = current_user.id)
+                order.save()
+                order.commit()
+                return make_response(jsonify({"message":"Order sent"}), 200)
+            else:
+                return make_response(jsonify({"message":"Meal does not exist in menu"}), 404)
+        else:
+            return make_response(jsonify({"message":"Menu does not exist"}), 404)
 
-    @token_required
-    @swag_from('api-docs/delete_order.yml')
-    def delete(self,current_user,meal_id):
-        pass
 
+class userGetOrder(Resource):
+    method_decorators=[token_required]
+    def delete(self, current_user, orderId):
+        """User deletes order"""
+        order = Order.query.filter_by(customer_id = current_user.id, id = orderId).first()
+        if order:
+            order.delete()
+            order.commit()
+            return make_response(jsonify({"message":"Successfully deleted"}), 200)
+        return make_response(jsonify({"message":"Order does not exist"}), 404)
 
-class get_orders(Resource):
-    @token_required
+class userOrders(Resource):
+    method_decorators=[token_required]
     @swag_from('api-docs/view_orders.yml')
-    def get(self,current_user):
-        pass
+    def get(self,current_user, menuName):
+        """gets orders a user makes from a certain menu"""
+        orders = Order.query.filter_by(customer_id = current_user.id).all()
+        if orders:
+            all_orders = []
+            for order in orders:
+                output={}
+                output['menuName'] = order.menuName
+                output['mealId'] = order.mealId
+                output['adminId'] = order.adminId
+                output['when'] = order.time_created
+                output['customerId'] = order.customer_id
+                output['orderId'] = order.id
+                all_orders.append(output)
+            return make_response(jsonify({"Orders":all_orders}), 200)
+
+class adminGetOrders(Resource):
+    method_decorators=[admin_required]
+    @swag_from('api-docs/view_orders.yml')
+    def get(self,current_admin):
+        """gets all orders made by users from a menu of an admin"""
+        orders = Order.query.filter_by(adminId = current_admin.id).all()
+        if orders:
+            all_orders = []
+            for order in orders:
+                output={}
+                output['menuName'] = order.menuName
+                output['mealId'] = order.mealId
+                output['adminId'] = order.adminId
+                output['when'] = order.time_created
+                output['customerId'] = order.customer_id
+                output['orderId'] = order.id
+                all_orders.append(output)
+            return make_response(jsonify({"Orders":all_orders}), 200)
+        return make_response(jsonify({"message":"You have no orders to serve"}), 404)
     
-BOOKAPI.add_resource(make_order,'/api/v2/orders/<int:meal_id>')
-BOOKAPI.add_resource(get_orders,'/api/v2/orders')
+BOOKAPI.add_resource(make_order,'/api/v2/orders/<menuName>/<int:meal_id>')
+BOOKAPI.add_resource(userGetOrder,'/api/v2/orders/<int:orderId>')
+BOOKAPI.add_resource(userOrders,'/api/v2/orders/<menuName>')
+BOOKAPI.add_resource(adminGetOrders,'/api/v2/orders/admin')
 
 BOOKAPI.add_resource(MenuCrud, '/api/v2/menus/<int:meal_id>')
 BOOKAPI.add_resource(view_menu, '/api/v2/menus/<menuName>')

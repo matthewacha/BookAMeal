@@ -5,3 +5,4 @@ omit =
     *__init__*
 	*manage.py*
     *config.py*
+    *models.py*

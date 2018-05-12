@@ -9,7 +9,11 @@ class User(DB.Model):
     password = DB.Column(DB.String(300))
     Admin_status = DB.Column(DB.Boolean, default=False)
     orders = DB.relationship('Order', backref='user')
-    
+    def __init__(self,email,password,Admin_status=False):
+        self.email = email
+        self.password = password
+        self.Admin_status = Admin_status
+
     def __repr__ (self):
         return "id:{} email:{} Admin:{}".format(self.id, self.email, self.Admin_status)
     
@@ -21,7 +25,7 @@ class User(DB.Model):
         
     def commit(self):
         DB.session.commit()
-
+    #DB.create_all()
 class Admin(DB.Model):
     __tablename__ = 'admin'
     id = DB.Column(DB.Integer, primary_key=True)
@@ -48,7 +52,7 @@ class Meal(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
     name = DB.Column(DB.String(60), nullable = False, unique = True)
     price = DB.Column(DB.Integer, nullable = False)
-    admin_id = DB.Column(DB.Integer, DB.ForeignKey('admin.id'))
+    adminId = DB.Column(DB.Integer, DB.ForeignKey('admin.id'))
     Menus = DB.relationship('Menu', backref='meal')
     def save(self):
         DB.session.add(self)
@@ -60,7 +64,7 @@ class Meal(DB.Model):
         DB.session.commit()
 
     def __repr__(self):
-        return 'id:{} name:{} price:{} adminId:{}'.format(self.id, self.name, self.price, self.admin_id)
+        return 'id:{} name:{} price:{} adminId:{}'.format(self.id, self.name, self.price, self.adminId)
     
     def __str__(self):
         return 'id:{} '.format(self.id)
@@ -114,8 +118,10 @@ class Menu(DB.Model):
 class Order(DB.Model):
     __tablename__ = 'order'
     id = DB.Column(DB.Integer, primary_key=True)
-    menu_id = DB.Column(DB.Integer, DB.ForeignKey('menu.name'))
-    #time_created = DB.Column(DB.String, datetime.datetime.today().strftime('%d'))
+    menuName = DB.Column(DB.Integer, DB.ForeignKey('menu.name')) 
+    mealId = DB.Column(DB.Integer)
+    adminId = DB.Column(DB.Integer)
+    time_created = DB.Column(DB.String)
     customer_id = DB.Column(DB.Integer, DB.ForeignKey('user.id'))
 
     def save(self):
@@ -132,3 +138,5 @@ class Order(DB.Model):
 
     def __str__(self):
         return "id:{}".format(self.id)
+
+DB.create_all()

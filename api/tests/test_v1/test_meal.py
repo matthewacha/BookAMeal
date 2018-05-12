@@ -32,10 +32,10 @@ class TestMeal(unittest.TestCase):
         self.tester.post('/api/v2/auth/Admin',headers =dict(access_token = result['token']))
         response = self.tester.post('/api/v2/auth/adminLogin', headers =dict(access_token = result['token']))
         result2 = json.loads(response.data.decode())
-        resp= self.tester.post('api/v2/meals/', content_type='application/json',
+        resp= self.tester.post('/api/v2/meals/', content_type='application/json',
                                    data =json.dumps( dict(name='Lobster',
                                                         price=5000)),
-                                   headers =dict(access_token = result['token'],K_access_token = result2['token']))
+                                   headers =dict(K_access_token = result2['token']))
         self.assertIn(u'Successfully added meal option', resp.data)
         self.assertEqual(resp.status_code, 201)
 
@@ -83,6 +83,56 @@ class TestMeal(unittest.TestCase):
         result=json.loads(response.data.decode())
         self.assertEqual(result['message'], u"Please put in an integer")
         self.assertEqual(response.status_code, 401)
+
+        response= self.tester.post('api/v2/meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='....',
+                                                        price=4353465)),
+                                   headers =dict(K_access_token = result2['token']))
+
+        result=json.loads(response.data.decode())
+        self.assertEqual(result['message'], u"None alpha-numeric input")
+        self.assertEqual(response.status_code, 401)
+
+        response= self.tester.post('api/v2/meals/', content_type='application/json',
+                                   data =json.dumps( dict(name="    ",
+                                                        price=4353465)),
+                                   headers =dict(K_access_token = result2['token']))
+
+        result=json.loads(response.data.decode())
+        self.assertEqual(result['message'], u"You cannot have whitespaces")
+        self.assertEqual(response.status_code, 401)
+
+        response= self.tester.post('api/v2/meals/', content_type='application/json',
+                                   data =json.dumps( dict(name=345646,
+                                                        price=4353465)),
+                                   headers =dict(K_access_token = result2['token']))
+
+        result=json.loads(response.data.decode())
+        self.assertEqual(result['message'], u"Please input a string")
+        self.assertEqual(response.status_code, 401)
+
+        response= self.tester.post('api/v2/meals/', content_type='application/json',
+                                   data =json.dumps( dict(name="",
+                                                        price="")),
+                                   headers =dict(K_access_token = result2['token']))
+
+        result=json.loads(response.data.decode())
+        self.assertEqual(result['message'], u"Please send a json object containing name and price")
+        self.assertEqual(response.status_code, 401)
+
+        self.tester.post('api/v2/meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='Friess',
+                                                        price=4000)),
+                         headers =dict(K_access_token = result2['token']))
+
+        response = self.tester.post('api/v2/meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='Friess',
+                                                        price=4000)),
+                         headers =dict(K_access_token = result2['token']))
+
+        result=json.loads(response.data.decode())
+        self.assertEqual(result['message'], u"Meal already exists")
+        self.assertEqual(response.status_code, 400)
 
     def test_get_all_meals(self):
         """test that all meal options can be retrieved"""
@@ -135,7 +185,14 @@ class TestMeal(unittest.TestCase):
                                                         headers =dict(K_access_token = resv['token']))
         result=json.loads(response.data.decode())
 
-        self.assertEqual(result['message'], "Successfully edited")
+        self.assertEqual(result['message'], u"Successfully edited")
+
+        response=self.tester.put('api/v2/meals/2', data =json.dumps( dict(name='',
+                                                        price=55000)),
+                                                        headers =dict(K_access_token = resv['token']))
+        result=json.loads(response.data.decode())
+
+        self.assertEqual(result['message'], u"You cannot have whitespaces")
         
         
     def test_fail_update_meal(self):
@@ -172,7 +229,6 @@ class TestMeal(unittest.TestCase):
         login = self.tester.post('api/v2/auth/login',content_type='application/json',
                                    data =json.dumps( dict(email="andrew@gmail.com",
                                                         password='lantern')))
-        resv1 = json.loads(login.data.decode())
         response=self.tester.put('api/v2/meals/2', data =json.dumps( dict(name='Fries',
                                                         price=55000)),
                                                         headers =dict(K_access_token = u'223344'))
@@ -199,6 +255,12 @@ class TestMeal(unittest.TestCase):
        
         self.assertIn(u'Successfully deleted meal', response.data)
         self.assertEqual(response.status_code, 200)
+
+        response=self.tester.delete('/api/v2/meals/2',
+                                    headers =dict(K_access_token = result2['token']))
+       
+        self.assertIn(u"Meal does not exist", response.data)
+        self.assertEqual(response.status_code, 404)
 
     def test_fail_to_delete_meal(self):
         """test that a meal option can only be deleted by admin"""
