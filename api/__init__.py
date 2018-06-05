@@ -2,9 +2,10 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger
+from flask_cors import CORS
 
 APP = Flask(__name__)
-
+CORS(APP)
 APP.config.from_object("config")
 APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 APP.config['SQLALCHEMY_BINDS'] = None

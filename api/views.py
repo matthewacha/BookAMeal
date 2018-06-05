@@ -80,7 +80,7 @@ def verify_meal():
     if type(data2['price']) == unicode:
         try:
             map(int, data2['price'].split())
-            return make_response(jsonify({'message':"Please put in an integer"}), 401)
+            #return make_response(jsonify({'message':"Please put in an integer"}), 401)
         except ValueError:
             return make_response(jsonify({'message':"Please put in an integer"}), 401)
     if type(data1['name']) != unicode:
@@ -144,6 +144,16 @@ class admin(Resource):
                 return make_response((jsonify({"message":"User set to admin"})), 201)
             return make_response((jsonify({"message":"User is already admin"})), 201)
 
+    method_decorators=[token_required]
+    @swag_from('api-docs/changeAdmin.yml')
+    def get(self, current_user):
+        user=User.query.filter_by(id = current_user.id).first()
+        admin_user = Admin.query.filter_by(user_id=current_user.id).first()
+        if user:
+            if not admin_user:
+                return make_response((jsonify({"message":"Not admin"})), 404)
+            return make_response((jsonify({"message":"Admin"})), 200)
+
 class adminLogin(Resource): 
     method_decorators=[token_required]
     @swag_from('api-docs/checkAdmin.yml')
@@ -204,6 +214,17 @@ class SingleMeal(Resource):
         return make_response(jsonify({"message":"Meal option does not exist"}), 404)
 
     method_decorators=[admin_required]
+    @swag_from('api-docs/update_meal.yml')#fix this
+    def get(self, current_admin, meal_id):
+        meal= Meal.query.filter_by(adminId=current_admin.id, id=meal_id).first()
+        if meal:
+            returnMeal={}
+            returnMeal["name"] = meal.name
+            returnMeal["price"] = meal.price
+            return make_response(jsonify({"Meal":returnMeal}), 200)
+        return make_response(jsonify({"message":"Meal option does not exist"}), 404)
+
+    method_decorators=[admin_required]
     @swag_from('api-docs/delete_meal.yml')
     def delete(self, current_admin, meal_id):
         meals= Meal.query.filter_by(adminId=current_admin.id).all()
@@ -225,7 +246,7 @@ class MenuCrud(Resource):
         if menu_meal:
             return make_response(jsonify({"message":"Meal option already exists in menu"}), 404)
         else:
-            menu_item = Menu(name=data['menuName'], owner_id=current_admin.id,mealId=meal_id,day=datetime.datetime.today().strftime('%d.%m.%y'))
+            menu_item = Menu(name=data['menuName'], owner_id=current_admin.id,mealId=meal_id,day=datetime.datetime.today().strftime('%d.%m.%y'),active="false")
             menu_item.save()
             menu_item.commit()
             return make_response(jsonify({"message":"Successfully added to menu"}), 201)
@@ -253,17 +274,42 @@ class view_menu(Resource):
     def get(self,current_user,menuName):
         menuList=[]
         menus=Menu.query.filter_by(name=menuName).all()
-        if menus:
+        if menus:#should turn all items state to active for customers to know which menu is active
             for item in menus:
                 output={}
+                output['state'] = item.active
                 output['id'] = item.id
                 output['name'] = item.name
                 output['adminId'] = item.owner_id
                 output['mealId'] = item.mealId
                 output['Day'] = item.day
                 menuList.append(output)
-            return make_response(jsonify({"Menu Meals":menuList}), 201)
+            return make_response(jsonify({"Menu":menuList}), 201)
         return make_response(jsonify({"message":"Menu does not exist"}), 404)
+
+    method_decorators=[admin_required]
+    @swag_from('api-docs/view_menu.yml')##
+    def put(self,current_admin,menuName):
+        menus=Menu.query.filter_by(name=menuName).all()
+        if menus:
+            for item in menus:
+                item.active = request.get_json('state')['state']
+                item.commit()
+            return make_response(jsonify({"message":request.get_json()['state']}), 201)
+        return make_response(jsonify({"message":"Menu does not exist"}), 404)
+
+
+
+class Menus(Resource):
+    method_decorators=[admin_required]
+    @swag_from('api-docs/view_menu.yml')
+    def get(self,current_admin):
+        menus=Menu.query.filter_by(owner_id=current_admin.id).all()
+        menusList=[item.name for item in menus]
+        uniqueMenus=set(menusList)
+        finalMenus=list(uniqueMenus)
+        return make_response(jsonify({"Menus":finalMenus}), 201)
+    
 
 class make_order(Resource):
     method_decorators=[token_required]
@@ -339,6 +385,7 @@ BOOKAPI.add_resource(userOrders,'/api/v2/orders/<menuName>')
 BOOKAPI.add_resource(adminGetOrders,'/api/v2/orders/admin')
 
 BOOKAPI.add_resource(MenuCrud, '/api/v2/menus/<int:meal_id>')
+BOOKAPI.add_resource(Menus, '/api/v2/menus/')
 BOOKAPI.add_resource(view_menu, '/api/v2/menus/<menuName>')
 BOOKAPI.add_resource(delMenu, '/api/v2/menus/<menuName>/<int:meal_id>')
 

@@ -75,8 +75,9 @@ class Menu(DB.Model):
     name = DB.Column(DB.String(60), nullable=False)
     owner_id = DB.Column(DB.Integer, DB.ForeignKey('admin.id'))
     mealId = DB.Column(DB.Integer, DB.ForeignKey('meal.id'))
-    day = DB.Column(DB.String, default = datetime.datetime.today())
+    day = DB.Column(DB.String(40), default = datetime.datetime.today())
     orders = DB.relationship('Order', backref='menu')
+    active = DB.Column(DB.String(20))
 
     def save(self):
         DB.session.add(self)
@@ -93,27 +94,7 @@ class Menu(DB.Model):
     def __str__(self):
         return 'id:{} '.format(self.id)
 
-"""class Menu_Meal(DB.Model):
-    __tablename__ = 'menu_meal'
-    id = DB.Column(DB.Integer, primary_key=True)
-    meal_id = DB.Column(DB.Integer, DB.ForeignKey('meal.id'))
-    menus = DB.relationship('Menu', backref='menu_meal')
-    #meals = DB.relationship('Meal', backref='menu_meal')
 
-    def save(self):
-        DB.session.add(self)
-
-    def delete(self):
-        DB.session.delete(self)
-        
-    def commit(self):
-        DB.session.commit()
-
-    def __repr__(self):
-        return 'id:{}'.format(self.id)
-    
-    def __str__(self):
-        return 'id:{} '.format(self.id)"""
 
 class Order(DB.Model):
     __tablename__ = 'order'
