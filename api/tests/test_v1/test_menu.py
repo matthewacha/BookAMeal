@@ -101,7 +101,7 @@ class TestMenu(unittest.TestCase):
         response=self.tester.get('/api/v2/menus/Special',
                                  headers =dict(K_access_token = result2['token']))
         rv = json.loads(response.data.decode())
-        self.assertEqual(2, rv['Menu Meals'][0]['mealId'])
+        self.assertEqual(2, rv['Menu'][0]['mealId'])
 
         response=self.tester.get('/api/v2/menus/Chillax',
                                  headers =dict(K_access_token = result2['token']))

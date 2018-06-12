@@ -176,7 +176,7 @@ class MealsCrud(Resource):
             return response
         data = request.get_json()
         
-        meal = Meal.query.filter_by(name=data['name']).first()
+        meal = Meal.query.filter_by(name=data['name'],adminId=current_admin.id).first()
 
         if not meal:
             new_meal=Meal(name=data['name'], price=data['price'],adminId=current_admin.id)
@@ -269,7 +269,7 @@ class delMenu(Resource):
         
 
 class view_menu(Resource):
-    method_decorators=[admin_required]
+    method_decorators=[token_required]
     @swag_from('api-docs/view_menu.yml')
     def get(self,current_user,menuName):
         menuList=[]
@@ -309,7 +309,26 @@ class Menus(Resource):
         uniqueMenus=set(menusList)
         finalMenus=list(uniqueMenus)
         return make_response(jsonify({"Menus":finalMenus}), 201)
-    
+
+class ActiveMenu(Resource):
+    method_decorators=[admin_required]
+    @swag_from('api-docs/view_menu.yml')
+    def get(self,current_admin):
+        menuMeals=Menu.query.filter_by(owner_id=current_admin.id, active="true").all()
+        menuList=[]
+	if menuMeals:
+	    for meanuMeal in menuMeals:
+		output={}
+		output['state'] = meanuMeal.active
+                output['id'] = meanuMeal.id
+                output['name'] = meanuMeal.name
+                output['adminId'] = meanuMeal.owner_id
+                output['mealId'] = meanuMeal.mealId
+                output['Day'] = meanuMeal.day
+		menuList.append(output)
+
+        return make_response(jsonify({"Menu":menuList}), 201)
+
 
 class make_order(Resource):
     method_decorators=[token_required]
@@ -386,6 +405,7 @@ BOOKAPI.add_resource(adminGetOrders,'/api/v2/orders/admin')
 
 BOOKAPI.add_resource(MenuCrud, '/api/v2/menus/<int:meal_id>')
 BOOKAPI.add_resource(Menus, '/api/v2/menus/')
+BOOKAPI.add_resource(ActiveMenu, '/api/v2/menu/')
 BOOKAPI.add_resource(view_menu, '/api/v2/menus/<menuName>')
 BOOKAPI.add_resource(delMenu, '/api/v2/menus/<menuName>/<int:meal_id>')
 

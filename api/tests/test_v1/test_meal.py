@@ -77,7 +77,7 @@ class TestMeal(unittest.TestCase):
 
         response= self.tester.post('api/v2/meals/', content_type='application/json',
                                    data =json.dumps( dict(name='Fries and wine',
-                                                        price='67800')),
+                                                        price='6780c0')),
                                    headers =dict(K_access_token = result2['token']))
 
         result=json.loads(response.data.decode())
