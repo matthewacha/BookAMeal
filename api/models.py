@@ -1,7 +1,10 @@
+import re
+from flask import Flask, jsonify, request, make_response
 from sqlalchemy import Column, ForeignKey, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 from api import DB
 import datetime
+
 class User(DB.Model):
     __tablename__ = 'user'
     id = DB.Column(DB.Integer, primary_key=True)
@@ -53,7 +56,26 @@ class Meal(DB.Model):
     name = DB.Column(DB.String(60), nullable = False, unique = True)
     price = DB.Column(DB.Integer, nullable = False)
     adminId = DB.Column(DB.Integer, DB.ForeignKey('admin.id'))
-    Menus = DB.relationship('Menu', backref='meal')
+    menus = DB.relationship('Menu', backref='meal')
+
+    def verify_meal(self):
+        response = None
+        characters= re.compile('[!#$%&*+-.^_`|~:<>,0-9]')
+        if not self.name and not self.price:
+            return make_response(jsonify({'message':"Please send a json object containing name and price"}), 401)
+        if type(self.price) == unicode:
+            try:
+                map(int, self.price.split())
+                #return make_response(jsonify({'message':"Please put in an integer"}), 401)
+            except ValueError:
+                return make_response(jsonify({'message':"Please put in an integer"}), 401)
+        if type(self.name) != unicode:
+            return make_response(jsonify({'message':"Please input a string"}), 401)
+        if characters.match(self.name):
+            return make_response(jsonify({'message':"None alpha-numeric input"}), 401)
+        if self.name.strip() == '':
+            return make_response(jsonify({'message':"You cannot have whitespaces"}), 401)
+
     def save(self):
         DB.session.add(self)
 

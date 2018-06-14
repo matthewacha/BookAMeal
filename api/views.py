@@ -70,25 +70,7 @@ def verify_input(funct):
         return funct(*args, **kwargs)
     return dec_funct
 
-def verify_meal():
-    response = None
-    characters= re.compile('[!#$%&*+-.^_`|~:<>,0-9]')
-    data1 = request.get_json('name')
-    data2 = request.get_json('price')
-    if not data1['name'] and not data2['price']:
-        return make_response(jsonify({'message':"Please send a json object containing name and price"}), 401)
-    if type(data2['price']) == unicode:
-        try:
-            map(int, data2['price'].split())
-            #return make_response(jsonify({'message':"Please put in an integer"}), 401)
-        except ValueError:
-            return make_response(jsonify({'message':"Please put in an integer"}), 401)
-    if type(data1['name']) != unicode:
-        return make_response(jsonify({'message':"Please input a string"}), 401)
-    if characters.match(data1['name']):
-        return make_response(jsonify({'message':"None alpha-numeric input"}), 401)
-    if data1['name'].strip() == '':
-        return make_response(jsonify({'message':"You cannot have whitespaces"}), 401)
+
             
     
     return response
@@ -171,15 +153,14 @@ class MealsCrud(Resource):
     method_decorators=[admin_required]
     @swag_from('api-docs/add_meal.yml')
     def post(self, current_admin):
-        response =verify_meal()
-        if response:
-            return response
         data = request.get_json()
-        
         meal = Meal.query.filter_by(name=data['name'],adminId=current_admin.id).first()
 
         if not meal:
             new_meal=Meal(name=data['name'], price=data['price'],adminId=current_admin.id)
+            response = new_meal.verify_meal()
+            if response:
+                return response
             DB.session.add(new_meal)
             DB.session.commit()
             return make_response(jsonify({"message":"Successfully added meal option"}), 201)
@@ -202,13 +183,13 @@ class SingleMeal(Resource):
     method_decorators=[admin_required]
     @swag_from('api-docs/update_meal.yml')
     def put(self, current_admin, meal_id):
-        response =verify_meal()
-        if response:
-            return response
         meal= Meal.query.filter_by(adminId=current_admin.id, id=meal_id).first()
         if meal:
             meal.name = request.get_json('name')['name']
             meal.price = request.get_json('price')['price']
+            response = meal.verify_meal()
+            if response:
+                return response
             meal.commit()
             return make_response(jsonify({"message":"Successfully edited"}), 201)
         return make_response(jsonify({"message":"Meal option does not exist"}), 404)
