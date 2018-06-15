@@ -9,11 +9,11 @@ menus, view customer orders and also check order history, revenues for specific 
 
 The app is built with ___python/Flask___ and ___React/Redux___ for the backend and frontend respectively
 
-__How to setup the Api__
+## __How to setup the Api__
 
 ___Prerequisites___
 
-__For windows__
+#### __For windows__
 
 a. Git 
 
@@ -28,7 +28,7 @@ e. To setup virtual environment `virtualenv env`
 
 f. To activate virtual environment `env\Scripts\activate`
 
-__For Linux__
+#### __For Linux__
 
 Linux terminal comes with python preinstalled.
 
@@ -36,6 +36,8 @@ Check what version of python is installed `python -V`.
 
 Install pip [here](https://pip.pypa.io/en/stable/installing/)
 
+
+#### __Installation and running server__
 
  Navigate to a folder in which you want to clone your repository. Clone the repository `git clone https://github.com/matthewacha/BookAMeal.git` or download zip.
 
@@ -56,7 +58,7 @@ To run tests with coverage input `python manage.py cover`
 
 To start the server input `python manage.py run_app`
 
-__How to use the api__
+#### __How to use the api__
 Use `127.0.0.1:5000/<end_point>` in your app so as to make requests to the Api.
 
 Below is a list of endpoints
@@ -64,7 +66,7 @@ Below is a list of endpoints
 
 |EndPoint|Functionality|
 |---------|------------|
-|User| |
+| __User__| |
 | POST/api/v2/auth/signup |Creates a user account|
 | POST/api/v2/auth/login |Logs in a user|
 | __Admin__ | |
