@@ -45,42 +45,15 @@ def admin_required(funct):
         return make_response((jsonify({"message":"Admin token is missing"})),401) 
     return verify_token
 
-def verify_input(funct):
-    @wraps(funct)
-    def dec_funct(*args,**kwargs):
-        auth = request.get_json()
-        if not auth or not auth['email'] or not auth['password']:
-            return make_response((jsonify({"message":"Authorize with email and password"})), 401)
-        if isinstance(auth['email'], int):
-            return make_response((jsonify({"message":"Please input a string"})), 401)
-        if auth['email'].strip() == '':
-            return make_response(jsonify({'message':"You cannot send an empty string"}), 401)
-        if isinstance(auth['password'],unicode):
-            if auth['password'].strip() == '':
-                return make_response(jsonify({'message':"You cannot send an empty string"}), 401)
-        if '@' not in auth['email'][:-4]:
-            return make_response((jsonify({"message":'''"@" is missing'''})), 401)
-        if auth['email'].lower().endswith('.com') is False:
-            return make_response((jsonify({"message":"Input a valid email"})), 401)
-        repeat = [char for char in auth['email'] if char == '@']
-        if len(repeat) > 1:
-            return make_response((jsonify({"message":'''Repetition of "@" is not allowed'''})), 401)
-        if len(auth['email'])>60:
-            return make_response((jsonify({"message":"Email should be less than 60 characters"})), 401)
-        return funct(*args, **kwargs)
-    return dec_funct
 
-
-            
-    
-    return response
 class signup(Resource):
-    method_decorators = [verify_input]
     @swag_from('api-docs/signup.yml')
     def post(self):
         json_data = request.get_json()
         """Check that user is unique"""
-        
+        verify = User.verify_input()
+        if verify:
+            return verify
         user=User.query.filter_by(email=json_data['email'].lower()).first()
 
         if user:
@@ -95,10 +68,12 @@ class signup(Resource):
         return make_response((jsonify({"message":"Successfully signed up"})), 201)
     
 class login(Resource):
-    method_decorators = [verify_input]
     @swag_from('api-docs/login.yml')
     def post(self):
         auth = request.get_json()
+        verify = User.verify_input()
+        if verify:
+            return verify
         """Verify user in database and password matches"""
         user=User.query.filter_by(email=auth['email'].lower()).first()
         if not user:
@@ -154,13 +129,13 @@ class MealsCrud(Resource):
     @swag_from('api-docs/add_meal.yml')
     def post(self, current_admin):
         data = request.get_json()
+        response = Meal.verify_meal()
+        if response:
+            return response
         meal = Meal.query.filter_by(name=data['name'],adminId=current_admin.id).first()
 
         if not meal:
             new_meal=Meal(name=data['name'], price=data['price'],adminId=current_admin.id)
-            response = new_meal.verify_meal()
-            if response:
-                return response
             DB.session.add(new_meal)
             DB.session.commit()
             return make_response(jsonify({"message":"Successfully added meal option"}), 201)
@@ -183,13 +158,13 @@ class SingleMeal(Resource):
     method_decorators=[admin_required]
     @swag_from('api-docs/update_meal.yml')
     def put(self, current_admin, meal_id):
+        response = Meal.verify_meal()
+        if response:
+            return response
         meal= Meal.query.filter_by(adminId=current_admin.id, id=meal_id).first()
         if meal:
             meal.name = request.get_json('name')['name']
             meal.price = request.get_json('price')['price']
-            response = meal.verify_meal()
-            if response:
-                return response
             meal.commit()
             return make_response(jsonify({"message":"Successfully edited"}), 201)
         return make_response(jsonify({"message":"Meal option does not exist"}), 404)

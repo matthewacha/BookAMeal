@@ -17,6 +17,31 @@ class User(DB.Model):
         self.password = password
         self.Admin_status = Admin_status
 
+    @staticmethod
+    def verify_input():
+        auth = request.get_json()
+        response = None
+        if not auth or not auth['email'] or not auth['password']:
+            return make_response((jsonify({"message":"Authorize with email and password"})), 401)
+        if isinstance(auth['email'], int):
+            return make_response((jsonify({"message":"Please input a string"})), 401)
+        if auth['email'].strip() == '':
+            return make_response(jsonify({'message':"You cannot send an empty string"}), 401)
+        if isinstance(auth['password'],unicode):
+            if auth['password'].strip() == '':
+                return make_response(jsonify({'message':"You cannot send an empty string"}), 401)
+        if '@' not in auth['email'][:-4]:
+            return make_response((jsonify({"message":'''"@" is missing'''})), 401)
+        if auth['email'].lower().endswith('.com') is False:
+            return make_response((jsonify({"message":"Input a valid email"})), 401)
+        repeat = [char for char in auth['email'] if char == '@']
+        if len(repeat) > 1:
+            return make_response((jsonify({"message":'''Repetition of "@" is not allowed'''})), 401)
+        if len(auth['email'])>60:
+            return make_response((jsonify({"message":"Email should be less than 60 characters"})), 401)
+        return response
+
+
     def __repr__ (self):
         return "id:{} email:{} Admin:{}".format(self.id, self.email, self.Admin_status)
     
@@ -58,22 +83,25 @@ class Meal(DB.Model):
     adminId = DB.Column(DB.Integer, DB.ForeignKey('admin.id'))
     menus = DB.relationship('Menu', backref='meal')
 
-    def verify_meal(self):
+    @staticmethod
+    def verify_meal():
         response = None
+        name =request.get_json('name')['name']
+        price = request.get_json('price')['price']
         characters= re.compile('[!#$%&*+-.^_`|~:<>,0-9]')
-        if not self.name and not self.price:
+        if not name and not price:
             return make_response(jsonify({'message':"Please send a json object containing name and price"}), 401)
-        if type(self.price) == unicode:
+        if type(price) == unicode:
             try:
-                map(int, self.price.split())
+                map(int, price.split())
                 #return make_response(jsonify({'message':"Please put in an integer"}), 401)
             except ValueError:
                 return make_response(jsonify({'message':"Please put in an integer"}), 401)
-        if type(self.name) != unicode:
+        if type(name) != unicode:
             return make_response(jsonify({'message':"Please input a string"}), 401)
-        if characters.match(self.name):
+        if characters.match(name):
             return make_response(jsonify({'message':"None alpha-numeric input"}), 401)
-        if self.name.strip() == '':
+        if name.strip() == '':
             return make_response(jsonify({'message':"You cannot have whitespaces"}), 401)
 
     def save(self):
