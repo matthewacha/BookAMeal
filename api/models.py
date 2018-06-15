@@ -54,7 +54,7 @@ class User(DB.Model):
     def commit(self):
         DB.session.commit()
     #DB.create_all()
-class admin(DB.Model):
+class Admin(DB.Model):
     __tablename__ = 'admin'
     id = DB.Column(DB.Integer, primary_key=True)
     email = DB.Column(DB.String(60), unique=True)
