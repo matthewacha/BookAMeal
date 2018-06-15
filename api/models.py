@@ -12,7 +12,7 @@ class User(DB.Model):
     password = DB.Column(DB.String(300))
     admin_status = DB.Column(DB.Boolean, default=False)
     orders = DB.relationship('Order', backref='user')
-    def __init__(self,email,password,Admin_status=False):
+    def __init__(self,email,password,admin_status=False):
         self.email = email
         self.password = password
         self.Admin_status = Admin_status
@@ -114,7 +114,7 @@ class Meal(DB.Model):
         DB.session.commit()
 
     def __repr__(self):
-        return 'id:{} name:{} price:{} adminId:{}'.format(self.id, self.name, self.price, self.adminId)
+        return 'id:{} name:{} price:{} adminId:{}'.format(self.id, self.name, self.price, self.admin_id)
     
     def __str__(self):
         return 'id:{} '.format(self.id)
@@ -139,7 +139,7 @@ class Menu(DB.Model):
         DB.session.commit()
 
     def __repr__(self):
-        return 'id:{} name:{} owner_id:{} mealId:{} day:{}'.format(self.id, self.name, self.owner_id, self.mealId,self.day)
+        return 'id:{} name:{} owner_id:{} meal_id:{} day:{}'.format(self.id, self.name, self.owner_id, self.meal_id,self.day)
     
     def __str__(self):
         return 'id:{} '.format(self.id)
