@@ -1,7 +1,7 @@
 # __Book-A-Meal__ 
 [![Build Status](https://travis-ci.org/matthewacha/BookAMeal.svg?branch=userEP)](https://travis-ci.org/matthewacha/BookAMeal) [![Coverage Status](https://coveralls.io/repos/github/matthewacha/BookAMeal/badge.svg?branch=userEP)](https://coveralls.io/github/matthewacha/BookAMeal?branch=userEP) [![Maintainability](https://api.codeclimate.com/v2/badges/0f81265250e64a32b7b3/maintainability)](https://codeclimate.com/github/matthewacha/BookAMeal/maintainability) [![Test Coverage](https://api.codeclimate.com/v2/badges/0f81265250e64a32b7b3/test_coverage)](https://codeclimate.com/github/matthewacha/BookAMeal/test_coverage)
 
-### __Description__
+## __Description__
 
 __Book_A_Meal__ is a web based app that enables caterers to setup 
 menus,view customer orders and also check order history, revenues for specific days. Book_A_Meal also gives customers a platform to place orders based on items on the day's menu, change their orders, and also view theirorde history.
@@ -21,7 +21,7 @@ b. python 2.7 or higher
 c. Install pip [here](https://pip.pypa.io/en/stable/installing/) 
 
 d. To install virtual environment `pip install virtualenv` for 
-python 2.x `pip3 install virtualenv`
+python 2.x `pip3 install virtualenv` for python 3.x
 
 e. To setup virtual environment `virtualenv env`
 
@@ -53,29 +53,26 @@ start of server
 __otherwise__
 
 3. a. Activate the virtual environment. Then install dependencies `pip install -r requirements.txt`
-   b. To run ___tests__ without coverage input `python manage.py test`
+   b. To run ___tests__ without coverage input `python manage.py run_test`
    
    c. To run tests with coverage input `python manage.py cover`
    
-   d. To start the server input `python manage.py runserver`
+   d. To start the server input `python manage.py run_app`
 
 __How to use the api__
-
-The api has two versions running.
-
-Navigate to the following endpoints in browser `127.0.0.1:5000/endpointUrl`
+Use `127.0.0.1:5000/endpointUrl` in your app so as to access the Api.
 
 
 |EndPoint|Functionality|
 |---------|------------|
 |User| |
-| > POST/api/v2/auth/signup |Creates a user account|
-| > POST/api/v2/auth/login |Logs in a user|
+| POST/api/v2/auth/signup |Creates a user account|
+| POST/api/v2/auth/login |Logs in a user|
 |Admin| |
 |Meals| |
-| > POST/api/v2/meals/|Caterer can add meal option|
-| > GET/api/v2/meals/|Caterer can get all meal options added|
-| > PUT/api/v2/meals/<meal_id>|Caterer can update a meal|
+| POST/api/v2/meals/|Caterer can add meal option|
+| GET/api/v2/meals/|Caterer can get all meal options added|
+| PUT/api/v2/meals/<meal_id>|Caterer can update a meal|
 |Menu| |
 |POST/api/v2/menu/<meal_id>]|Caterer can add meal option to menu|
 |POST/api/v2/menus/<int:meal_id>](#)|Caterer can post menu|
