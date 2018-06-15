@@ -1,6 +1,6 @@
 # __Book-A-Meal__ 
 
-[![Build Status](https://travis-ci.org/matthewacha/BookAMeal.svg?branch=userEP)](https://travis-ci.org/matthewacha/BookAMeal) [![Coverage Status](https://coveralls.io/repos/github/matthewacha/BookAMeal/badge.svg?branch=userEP)](https://coveralls.io/github/matthewacha/BookAMeal?branch=userEP) [![Maintainability](https://api.codeclimate.com/v2/badges/0f81265250e64a32b7b3/maintainability)](https://codeclimate.com/github/matthewacha/BookAMeal/maintainability) [![Test Coverage](https://api.codeclimate.com/v2/badges/0f81265250e64a32b7b3/test_coverage)](https://codeclimate.com/github/matthewacha/BookAMeal/test_coverage)
+[![Build Status](https://travis-ci.org/matthewacha/BookAMeal.svg?branch=userEP)](https://travis-ci.org/matthewacha/BookAMeal) [![Coverage Status](https://coveralls.io/repos/github/matthewacha/BookAMeal/badge.svg?branch=userEP)](https://coveralls.io/github/matthewacha/BookAMeal?branch=userEP) [![Maintainability](https://api.codeclimate.com/v1/badges/0f81265250e64a32b7b3/maintainability)](https://codeclimate.com/github/matthewacha/BookAMeal/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/0f81265250e64a32b7b3/test_coverage)](https://codeclimate.com/github/matthewacha/BookAMeal/test_coverage)
 
 ## __Description__
 
