@@ -10,7 +10,7 @@ class User(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
     email = DB.Column(DB.String(60), unique=True)
     password = DB.Column(DB.String(300))
-    Admin_status = DB.Column(DB.Boolean, default=False)
+    admin_status = DB.Column(DB.Boolean, default=False)
     orders = DB.relationship('Order', backref='user')
     def __init__(self,email,password,Admin_status=False):
         self.email = email
@@ -43,7 +43,7 @@ class User(DB.Model):
 
 
     def __repr__ (self):
-        return "id:{} email:{} Admin:{}".format(self.id, self.email, self.Admin_status)
+        return "id:{} email:{} Admin:{}".format(self.id, self.email, self.admin_status)
     
     def __str__(self):
         return "{}".format(self.email)
@@ -59,12 +59,12 @@ class Admin(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
     email = DB.Column(DB.String(60), unique=True)
     user_id = DB.Column(DB.Integer)
-    Admin_status = DB.Column(DB.Boolean, default=True)
+    admin_status = DB.Column(DB.Boolean, default=True)
     meals = DB.relationship('Meal', backref='admin')
     menus = DB.relationship('Menu', backref='admin')
     
     def __repr__ (self):
-        return "id:{} email:{} Admin:{} user_id:{} meals:{}".format(self.id, self.email, self.Admin_status, self.user_id, self.meals)
+        return "id:{} email:{} Admin:{} user_id:{} meals:{}".format(self.id, self.email, self.admin_status, self.user_id, self.meals)
     
     def __str__(self):
         return "{}".format(self.email)
@@ -80,7 +80,7 @@ class Meal(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
     name = DB.Column(DB.String(60), nullable = False, unique = True)
     price = DB.Column(DB.Integer, nullable = False)
-    adminId = DB.Column(DB.Integer, DB.ForeignKey('admin.id'))
+    admin_id = DB.Column(DB.Integer, DB.ForeignKey('admin.id'))
     menus = DB.relationship('Menu', backref='meal')
 
     @staticmethod
@@ -124,7 +124,7 @@ class Menu(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
     name = DB.Column(DB.String(60), nullable=False)
     owner_id = DB.Column(DB.Integer, DB.ForeignKey('admin.id'))
-    mealId = DB.Column(DB.Integer, DB.ForeignKey('meal.id'))
+    meal_id = DB.Column(DB.Integer, DB.ForeignKey('meal.id'))
     day = DB.Column(DB.String(40), default = datetime.datetime.today())
     orders = DB.relationship('Order', backref='menu')
     active = DB.Column(DB.String(20))
@@ -149,9 +149,9 @@ class Menu(DB.Model):
 class Order(DB.Model):
     __tablename__ = 'order'
     id = DB.Column(DB.Integer, primary_key=True)
-    menuName = DB.Column(DB.Integer, DB.ForeignKey('menu.name')) 
-    mealId = DB.Column(DB.Integer)
-    adminId = DB.Column(DB.Integer)
+    menu_name = DB.Column(DB.Integer, DB.ForeignKey('menu.name')) 
+    meal_id = DB.Column(DB.Integer)
+    admin_id = DB.Column(DB.Integer)
     time_created = DB.Column(DB.String)
     customer_id = DB.Column(DB.Integer, DB.ForeignKey('user.id'))
 

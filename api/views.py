@@ -95,7 +95,7 @@ class admin(Resource):
         admin_user = Admin.query.filter_by(user_id=current_user.id).first()
         if user:
             if not admin_user:
-                new_admin = Admin(email = current_user.email, user_id = current_user.id, Admin_status=True)
+                new_admin = Admin(email = current_user.email, user_id = current_user.id, admin_status=True)
                 new_admin.save()
                 new_admin.commit()
                 return make_response((jsonify({"message":"User set to admin"})), 201)
@@ -132,10 +132,10 @@ class MealsCrud(Resource):
         response = Meal.verify_meal()
         if response:
             return response
-        meal = Meal.query.filter_by(name=data['name'],adminId=current_admin.id).first()
+        meal = Meal.query.filter_by(name=data['name'],admin_id=current_admin.id).first()
 
         if not meal:
-            new_meal=Meal(name=data['name'], price=data['price'],adminId=current_admin.id)
+            new_meal=Meal(name=data['name'], price=data['price'],admin_id=current_admin.id)
             DB.session.add(new_meal)
             DB.session.commit()
             return make_response(jsonify({"message":"Successfully added meal option"}), 201)
@@ -144,7 +144,7 @@ class MealsCrud(Resource):
     method_decorators=[admin_required]
     @swag_from('api-docs/get_meals.yml')
     def get(self, current_admin):
-        meals= Meal.query.filter_by(adminId=current_admin.id).all()
+        meals= Meal.query.filter_by(admin_id=current_admin.id).all()
         meals_list=[]
         for meal in meals:
             output={}
@@ -161,7 +161,7 @@ class SingleMeal(Resource):
         response = Meal.verify_meal()
         if response:
             return response
-        meal= Meal.query.filter_by(adminId=current_admin.id, id=meal_id).first()
+        meal= Meal.query.filter_by(admin_id=current_admin.id, id=meal_id).first()
         if meal:
             meal.name = request.get_json('name')['name']
             meal.price = request.get_json('price')['price']
@@ -172,7 +172,7 @@ class SingleMeal(Resource):
     method_decorators=[admin_required]
     @swag_from('api-docs/update_meal.yml')#fix this
     def get(self, current_admin, meal_id):
-        meal= Meal.query.filter_by(adminId=current_admin.id, id=meal_id).first()
+        meal= Meal.query.filter_by(admin_id=current_admin.id, id=meal_id).first()
         if meal:
             returnMeal={}
             returnMeal["name"] = meal.name
@@ -183,7 +183,7 @@ class SingleMeal(Resource):
     method_decorators=[admin_required]
     @swag_from('api-docs/delete_meal.yml')
     def delete(self, current_admin, meal_id):
-        meals= Meal.query.filter_by(adminId=current_admin.id).all()
+        meals= Meal.query.filter_by(admin_id=current_admin.id).all()
         if meals:
             for meal in meals:
                 if meal.id == meal_id:
@@ -197,12 +197,12 @@ class MenuCrud(Resource):
     @swag_from('api-docs/add_menu.yml')
     def post(self,current_admin, meal_id):
         data = request.get_json()
-        menu_meal = Menu.query.filter_by(name=data['menuName'], mealId=meal_id).first()
+        menu_meal = Menu.query.filter_by(name=data['menu_name'], meal_id=meal_id).first()
         
         if menu_meal:
             return make_response(jsonify({"message":"Meal option already exists in menu"}), 401)
         else:
-            menu_item = Menu(name=data['menuName'], owner_id=current_admin.id,mealId=meal_id,day=datetime.datetime.today().strftime('%d.%m.%y'),active="false")
+            menu_item = Menu(name=data['menu_name'], owner_id=current_admin.id,meal_id=meal_id,day=datetime.datetime.today().strftime('%d.%m.%y'),active="false")
             menu_item.save()
             menu_item.commit()
             return make_response(jsonify({"message":"Successfully added to menu"}), 201)
@@ -210,10 +210,10 @@ class MenuCrud(Resource):
 class delMenu(Resource):        
     method_decorators=[admin_required]
     @swag_from('api-docs/delete_menu.yml')
-    def delete(self, current_user,meal_id, menuName):
-        menu = Menu.query.filter_by(name=menuName).first()
+    def delete(self, current_user,meal_id, menu_name):
+        menu = Menu.query.filter_by(name=menu_name).first()
         if menu:
-            menu_meal = Menu.query.filter_by(name=menuName, mealId=meal_id).first()
+            menu_meal = Menu.query.filter_by(name=menu_name, meal_id=meal_id).first()
             if menu_meal:
                 menu_meal.delete()
                 menu_meal.commit()
@@ -227,26 +227,26 @@ class delMenu(Resource):
 class view_menu(Resource):
     method_decorators=[token_required]
     @swag_from('api-docs/view_menu.yml')
-    def get(self,current_user,menuName):
-        menuList=[]
-        menus=Menu.query.filter_by(name=menuName).all()
+    def get(self,current_user,menu_name):
+        menu_list=[]
+        menus=Menu.query.filter_by(name=menu_name).all()
         if menus:#should turn all items state to active for customers to know which menu is active
             for item in menus:
                 output={}
                 output['state'] = item.active
                 output['id'] = item.id
                 output['name'] = item.name
-                output['adminId'] = item.owner_id
-                output['mealId'] = item.mealId
+                output['admin_id'] = item.owner_id
+                output['meal_id'] = item.meal_id
                 output['Day'] = item.day
-                menuList.append(output)
-            return make_response(jsonify({"Menu":menuList}), 201)
+                menu_list.append(output)
+            return make_response(jsonify({"Menu":menu_list}), 201)
         return make_response(jsonify({"message":"Menu does not exist"}), 404)
 
     method_decorators=[admin_required]
     @swag_from('api-docs/view_menu.yml')##
-    def put(self,current_admin,menuName):
-        menus=Menu.query.filter_by(name=menuName).all()
+    def put(self,current_admin,menu_name):
+        menus=Menu.query.filter_by(name=menu_name).all()
         if menus:
             for item in menus:
                 item.active = request.get_json('state')['state']
@@ -261,40 +261,40 @@ class Menus(Resource):
     @swag_from('api-docs/view_menu.yml')
     def get(self,current_admin):
         menus=Menu.query.filter_by(owner_id=current_admin.id).all()
-        menusList=[item.name for item in menus]
-        uniqueMenus=set(menusList)
-        finalMenus=list(uniqueMenus)
-        return make_response(jsonify({"Menus":finalMenus}), 201)
+        menus_list=[item.name for item in menus]
+        unique_menus=set(menus_list)
+        final_menus=list(unique_menus)
+        return make_response(jsonify({"Menus":final_menus}), 201)
 
 class ActiveMenu(Resource):
     method_decorators=[admin_required]
     @swag_from('api-docs/view_menu.yml')
     def get(self,current_admin):
-        menuMeals=Menu.query.filter_by(owner_id=current_admin.id, active="true").all()
-        menuList=[]
+        menu_meals=Menu.query.filter_by(owner_id=current_admin.id, active="true").all()
+        menu_list=[]
 	if menuMeals:
-	    for meanuMeal in menuMeals:
+	    for meanu_meal in menu_meals:
 		output={}
-		output['state'] = meanuMeal.active
-                output['id'] = meanuMeal.id
-                output['name'] = meanuMeal.name
-                output['adminId'] = meanuMeal.owner_id
-                output['mealId'] = meanuMeal.mealId
-                output['Day'] = meanuMeal.day
-		menuList.append(output)
+		output['state'] = meanu_meal.active
+                output['id'] = meanu_meal.id
+                output['name'] = menu_meal.name
+                output['admin_id'] = menu_meal.owner_id
+                output['meal_id'] = menu_meal.meal_id
+                output['Day'] = menu_meal.day
+		menu_list.append(output)
 
-        return make_response(jsonify({"Menu":menuList}), 201)
+        return make_response(jsonify({"Menu":menu_list}), 201)
 
 
 class make_order(Resource):
     method_decorators=[token_required]
     @swag_from('api-docs/add_order.yml')
-    def post(self, current_user, menuName, meal_id):
-        menus=Menu.query.filter_by(name=menuName).first()
+    def post(self, current_user, menu_name, meal_id):
+        menus=Menu.query.filter_by(name=menu_name).first()
         if menus:
-            menu_meal = Menu.query.filter_by(name=menuName, mealId=meal_id).first()
+            menu_meal = Menu.query.filter_by(name=menu_name, meal_id=meal_id).first()
             if menu_meal:
-                order =Order(menuName=menuName,mealId = meal_id, adminId =menu_meal.owner_id, time_created = datetime.datetime.today().strftime('%d.%m.%y %H.%M.%S'),customer_id = current_user.id)
+                order =Order(menu_name=menu_name,meal_id= meal_id, admin_id =menu_meal.owner_id, time_created = datetime.datetime.today().strftime('%d.%m.%y %H.%M.%S'),customer_id = current_user.id)
                 order.save()
                 order.commit()
                 return make_response(jsonify({"message":"Order sent"}), 201)
@@ -306,9 +306,9 @@ class make_order(Resource):
 
 class userDeleteOrder(Resource):
     method_decorators=[token_required]
-    def delete(self, current_user, orderId):
+    def delete(self, current_user, order_id):
         """User deletes order"""
-        order = Order.query.filter_by(customer_id = current_user.id, id = orderId).first()
+        order = Order.query.filter_by(customer_id = current_user.id, id = order_id).first()
         if order:
             order.delete()
             order.commit()
@@ -318,16 +318,16 @@ class userDeleteOrder(Resource):
 class userOrders(Resource):
     method_decorators=[token_required]
     @swag_from('api-docs/view_orders.yml')
-    def get(self,current_user, menuName):
+    def get(self,current_user, menu_name):
         """gets orders a user makes from a certain menu"""
         orders = Order.query.filter_by(customer_id = current_user.id).all()
         if orders:
             all_orders = []
             for order in orders:
                 output={}
-                output['menuName'] = order.menuName
-                output['mealId'] = order.mealId
-                output['adminId'] = order.adminId
+                output['menu_name'] = order.menu_name
+                output['mealId'] = order.meal_id
+                output['adminId'] = order.admin_id
                 output['when'] = order.time_created
                 output['customerId'] = order.customer_id
                 output['orderId'] = order.id
@@ -339,30 +339,30 @@ class adminGetOrders(Resource):
     @swag_from('api-docs/view_orders.yml')
     def get(self,current_admin):
         """gets all orders made by users from a menu of an admin"""
-        orders = Order.query.filter_by(adminId = current_admin.id).all()
+        orders = Order.query.filter_by(admin_id = current_admin.id).all()
         all_orders = []
         if orders:
             for order in orders:
                 output={}
-                output['menuName'] = order.menuName
-                output['mealId'] = order.mealId
-                output['adminId'] = order.adminId
+                output['menuName'] = order.menu_name
+                output['mealId'] = order.meal_id
+                output['adminId'] = order.admin_id
                 output['when'] = order.time_created
                 output['customerId'] = order.customer_id
                 output['orderId'] = order.id
                 all_orders.append(output)
         return make_response(jsonify({"Orders":all_orders}), 200)
     
-BOOKAPI.add_resource(make_order,'/api/v2/orders/<menuName>/<int:meal_id>')
-BOOKAPI.add_resource(userDeleteOrder,'/api/v2/orders/<int:orderId>')
-BOOKAPI.add_resource(userOrders,'/api/v2/orders/<menuName>')
+BOOKAPI.add_resource(make_order,'/api/v2/orders/<menu_name>/<int:meal_id>')
+BOOKAPI.add_resource(userDeleteOrder,'/api/v2/orders/<int:order_id>')
+BOOKAPI.add_resource(userOrders,'/api/v2/orders/<menu_name>')
 BOOKAPI.add_resource(adminGetOrders,'/api/v2/orders/admin')
 
 BOOKAPI.add_resource(MenuCrud, '/api/v2/menus/<int:meal_id>')
 BOOKAPI.add_resource(Menus, '/api/v2/menus/')
 BOOKAPI.add_resource(ActiveMenu, '/api/v2/menu/')
-BOOKAPI.add_resource(view_menu, '/api/v2/menus/<menuName>')
-BOOKAPI.add_resource(delMenu, '/api/v2/menus/<menuName>/<int:meal_id>')
+BOOKAPI.add_resource(view_menu, '/api/v2/menus/<menu_name>')
+BOOKAPI.add_resource(delMenu, '/api/v2/menus/<menu_name>/<int:meal_id>')
 
 BOOKAPI.add_resource(MealsCrud, '/api/v2/meals/')
 BOOKAPI.add_resource(SingleMeal, '/api/v2/meals/<int:meal_id>')

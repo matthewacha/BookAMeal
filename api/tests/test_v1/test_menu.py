@@ -47,7 +47,7 @@ class TestMenu(unittest.TestCase):
                                                         price=15000)),
                          headers = dict(K_access_token = result2['token']))
         responsev=self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menuName='Special')),
+        data = json.dumps(dict(menu_name='Special')),
                                   headers = dict(K_access_token =result2['token']))
         self.assertIn(u'Successfully added to menu', responsev.data)
         self.assertEqual(responsev.status_code, 201)
@@ -69,10 +69,10 @@ class TestMenu(unittest.TestCase):
                                                         price=5000)),
                          headers =dict(access_token = result['token']))
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menuName='Special')),
+        data = json.dumps(dict(menu_name='Special')),
                                   headers = dict(K_access_token =result2['token']))
         response=self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menuName='Special')),
+        data = json.dumps(dict(menu_name='Special')),
                                   headers = dict(K_access_token =result2['token']))
         self.assertIn(u'Meal option already exists in menu', response.data)
         self.assertEqual(response.status_code, 401)
@@ -94,15 +94,15 @@ class TestMenu(unittest.TestCase):
                                                         price=5000)),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menuName='Special')),
+        data = json.dumps(dict(menu_name='Special')),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/1',content_type='application/json',
-        data = json.dumps(dict(menuName='Special')),
+        data = json.dumps(dict(menu_name='Special')),
                          headers =dict(K_access_token = result2['token']))
         response=self.tester.get('/api/v2/menus/Special',
                                  headers =dict(K_access_token = result2['token']))
         rv = json.loads(response.data.decode())
-        self.assertEqual(2, rv['Menu'][0]['mealId'])
+        self.assertEqual(2, rv['Menu'][0]['meal_id'])
 
     def test_get_no_menu(self):
         """test that message is sent when menu does not exist"""
@@ -139,10 +139,10 @@ class TestMenu(unittest.TestCase):
                                                         price=15000)),
                          headers =dict(access_token = result2['token']))
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menuName='Special')),
+        data = json.dumps(dict(menu_name='Special')),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/3',content_type='application/json',
-        data = json.dumps(dict(menuName='Special')), headers =dict(access_token = result2['token']))
+        data = json.dumps(dict(menu_name='Special')), headers =dict(access_token = result2['token']))
         response=self.tester.delete('/api/v2/menus/Special/2', headers =dict(K_access_token = result2['token']))
         self.assertIn(u'Successfully deleted from menu', response.data)
         self.assertEqual(response.status_code, 200)
@@ -169,10 +169,10 @@ class TestMenu(unittest.TestCase):
                                                         price=15000)),
                          headers =dict(access_token = result2['token']))
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menuName='Special')),
+        data = json.dumps(dict(menu_name='Special')),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/3',content_type='application/json',
-        data = json.dumps(dict(menuName='Special')), headers =dict(access_token = result2['token']))
+        data = json.dumps(dict(menu_name='Special')), headers =dict(access_token = result2['token']))
 
         response=self.tester.delete('/api/v2/menus/Special/4', headers =dict(K_access_token = result['token']))
         self.assertIn(u'Meal does not exist', response.data)
