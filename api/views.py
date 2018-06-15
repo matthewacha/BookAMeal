@@ -26,7 +26,7 @@ def token_required(funct):
             except:
                 return make_response((jsonify({"message":"Unauthorized access, please login"})),401)
             return funct(current_user, *args, **kwargs)
-        return make_response((jsonify({"message":"Token is missing"})),401) 
+        return make_response((jsonify({"message":"Token is missing"})),404) 
     return verify_token
 
 def admin_required(funct):
@@ -99,7 +99,7 @@ class admin(Resource):
                 new_admin.save()
                 new_admin.commit()
                 return make_response((jsonify({"message":"User set to admin"})), 201)
-            return make_response((jsonify({"message":"User is already admin"})), 201)
+            return make_response((jsonify({"message":"User is already admin"})), 401)
 
     method_decorators=[token_required]
     @swag_from('api-docs/changeAdmin.yml')
@@ -200,7 +200,7 @@ class MenuCrud(Resource):
         menu_meal = Menu.query.filter_by(name=data['menuName'], mealId=meal_id).first()
         
         if menu_meal:
-            return make_response(jsonify({"message":"Meal option already exists in menu"}), 404)
+            return make_response(jsonify({"message":"Meal option already exists in menu"}), 401)
         else:
             menu_item = Menu(name=data['menuName'], owner_id=current_admin.id,mealId=meal_id,day=datetime.datetime.today().strftime('%d.%m.%y'),active="false")
             menu_item.save()
@@ -297,14 +297,14 @@ class make_order(Resource):
                 order =Order(menuName=menuName,mealId = meal_id, adminId =menu_meal.owner_id, time_created = datetime.datetime.today().strftime('%d.%m.%y %H.%M.%S'),customer_id = current_user.id)
                 order.save()
                 order.commit()
-                return make_response(jsonify({"message":"Order sent"}), 200)
+                return make_response(jsonify({"message":"Order sent"}), 201)
             else:
                 return make_response(jsonify({"message":"Meal does not exist in menu"}), 404)
         else:
             return make_response(jsonify({"message":"Menu does not exist"}), 404)
 
 
-class userGetOrder(Resource):
+class userDeleteOrder(Resource):
     method_decorators=[token_required]
     def delete(self, current_user, orderId):
         """User deletes order"""
@@ -340,8 +340,8 @@ class adminGetOrders(Resource):
     def get(self,current_admin):
         """gets all orders made by users from a menu of an admin"""
         orders = Order.query.filter_by(adminId = current_admin.id).all()
+        all_orders = []
         if orders:
-            all_orders = []
             for order in orders:
                 output={}
                 output['menuName'] = order.menuName
@@ -351,11 +351,10 @@ class adminGetOrders(Resource):
                 output['customerId'] = order.customer_id
                 output['orderId'] = order.id
                 all_orders.append(output)
-            return make_response(jsonify({"Orders":all_orders}), 200)
-        return make_response(jsonify({"message":"You have no orders to serve"}), 404)
+        return make_response(jsonify({"Orders":all_orders}), 200)
     
 BOOKAPI.add_resource(make_order,'/api/v2/orders/<menuName>/<int:meal_id>')
-BOOKAPI.add_resource(userGetOrder,'/api/v2/orders/<int:orderId>')
+BOOKAPI.add_resource(userDeleteOrder,'/api/v2/orders/<int:orderId>')
 BOOKAPI.add_resource(userOrders,'/api/v2/orders/<menuName>')
 BOOKAPI.add_resource(adminGetOrders,'/api/v2/orders/admin')
 

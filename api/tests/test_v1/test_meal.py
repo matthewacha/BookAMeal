@@ -39,8 +39,8 @@ class TestMeal(unittest.TestCase):
         self.assertIn(u'Successfully added meal option', resp.data)
         self.assertEqual(resp.status_code, 201)
 
-    def test_unauthorized_create_meal(self):
-        """test that a meal option cannot be succesfully added"""
+    def test_token_missing_create_meal(self):
+        """test that a meal option cannot be succesfully added with missing token"""
         login_=login(self.tester)
         result = json.loads(login_.data.decode())
         response= self.tester.post('api/v2/meals/', content_type='application/json',
@@ -49,6 +49,9 @@ class TestMeal(unittest.TestCase):
                                    headers =dict(access_token = result['token']))
         self.assertIn(u'Admin token is missing', response.data)
         self.assertEqual(response.status_code, 401)
+
+    def test_unauthorized_create_meal(self):
+        """test that non authorized user cannot add meal"""
 
         response= self.tester.post('api/v2/meals/', content_type='application/json',
                                    data =json.dumps( dict(name='Fries',
@@ -59,7 +62,7 @@ class TestMeal(unittest.TestCase):
 
 
 
-    def test_fail_create_meal(self):
+    def test_fail_create_meal_unicode_price(self):
         """test that a meal option cannot be added if string price
         is passed instead of integer"""
         login_=login(self.tester)
@@ -75,14 +78,13 @@ class TestMeal(unittest.TestCase):
         self.assertEqual(result3['message'], u"Please put in an integer")
         self.assertEqual(response1.status_code, 401)
 
-        response= self.tester.post('api/v2/meals/', content_type='application/json',
-                                   data =json.dumps( dict(name='Fries and wine',
-                                                        price='6780c0')),
-                                   headers =dict(K_access_token = result2['token']))
-
-        result=json.loads(response.data.decode())
-        self.assertEqual(result['message'], u"Please put in an integer")
-        self.assertEqual(response.status_code, 401)
+    def test_fail_create_meal_non_alpha_numeric_name(self):
+        """test that a meal option cannot be added if non alpha-numeric name"""
+        login_=login(self.tester)
+        resv = json.loads(login_.data.decode())
+        self.tester.post('/api/v2/auth/Admin',headers =dict(access_token = resv['token']))
+        response = self.tester.post('/api/v2/auth/adminLogin', headers =dict(access_token = resv['token']))
+        result2 = json.loads(response.data.decode())
 
         response= self.tester.post('api/v2/meals/', content_type='application/json',
                                    data =json.dumps( dict(name='....',
@@ -93,6 +95,14 @@ class TestMeal(unittest.TestCase):
         self.assertEqual(result['message'], u"None alpha-numeric input")
         self.assertEqual(response.status_code, 401)
 
+    def test_fail_create_meal_whitespcae_name(self):
+        """test that a meal option cannot be added if whitespace in name"""
+        login_=login(self.tester)
+        resv = json.loads(login_.data.decode())
+        self.tester.post('/api/v2/auth/Admin',headers =dict(access_token = resv['token']))
+        response = self.tester.post('/api/v2/auth/adminLogin', headers =dict(access_token = resv['token']))
+        result2 = json.loads(response.data.decode())
+
         response= self.tester.post('api/v2/meals/', content_type='application/json',
                                    data =json.dumps( dict(name="    ",
                                                         price=4353465)),
@@ -101,6 +111,14 @@ class TestMeal(unittest.TestCase):
         result=json.loads(response.data.decode())
         self.assertEqual(result['message'], u"You cannot have whitespaces")
         self.assertEqual(response.status_code, 401)
+
+    def test_fail_create_meal_none_string_type_name(self):
+        """test that a meal option cannot be added if name is not unicode string"""
+        login_=login(self.tester)
+        resv = json.loads(login_.data.decode())
+        self.tester.post('/api/v2/auth/Admin',headers =dict(access_token = resv['token']))
+        response = self.tester.post('/api/v2/auth/adminLogin', headers =dict(access_token = resv['token']))
+        result2 = json.loads(response.data.decode())
 
         response= self.tester.post('api/v2/meals/', content_type='application/json',
                                    data =json.dumps( dict(name=345646,
@@ -111,6 +129,14 @@ class TestMeal(unittest.TestCase):
         self.assertEqual(result['message'], u"Please input a string")
         self.assertEqual(response.status_code, 401)
 
+    def test_fail_create_meal_no_inputs(self):
+        """test that a meal option cannot be added if no inputs sent"""
+        login_=login(self.tester)
+        resv = json.loads(login_.data.decode())
+        self.tester.post('/api/v2/auth/Admin',headers =dict(access_token = resv['token']))
+        response = self.tester.post('/api/v2/auth/adminLogin', headers =dict(access_token = resv['token']))
+        result2 = json.loads(response.data.decode())
+
         response= self.tester.post('api/v2/meals/', content_type='application/json',
                                    data =json.dumps( dict(name="",
                                                         price="")),
@@ -119,6 +145,14 @@ class TestMeal(unittest.TestCase):
         result=json.loads(response.data.decode())
         self.assertEqual(result['message'], u"Please send a json object containing name and price")
         self.assertEqual(response.status_code, 401)
+
+    def test_fail_create_unique_meal(self):
+        """test that a meal option cannot be added if meal not unique"""
+        login_=login(self.tester)
+        resv = json.loads(login_.data.decode())
+        self.tester.post('/api/v2/auth/Admin',headers =dict(access_token = resv['token']))
+        response = self.tester.post('/api/v2/auth/adminLogin', headers =dict(access_token = resv['token']))
+        result2 = json.loads(response.data.decode())
 
         self.tester.post('api/v2/meals/', content_type='application/json',
                                    data =json.dumps( dict(name='Friess',
@@ -159,6 +193,7 @@ class TestMeal(unittest.TestCase):
         result=json.loads(response.data.decode())
 
         self.assertEqual(len(result['Meals']), 2)
+        self.assertEqual(response.status_code, 200)
 
     def test_update_meal(self):
         """test that a meal option can be updated"""
@@ -186,13 +221,7 @@ class TestMeal(unittest.TestCase):
         result=json.loads(response.data.decode())
 
         self.assertEqual(result['message'], u"Successfully edited")
-
-        response=self.tester.put('api/v2/meals/2', data =json.dumps( dict(name='',
-                                                        price=55000)),
-                                                        headers =dict(K_access_token = resv['token']))
-        result=json.loads(response.data.decode())
-
-        self.assertEqual(result['message'], u"You cannot have whitespaces")
+        self.assertEqual(response.status_code, 201)
         
         
     def test_fail_update_meal(self):
@@ -221,6 +250,9 @@ class TestMeal(unittest.TestCase):
                                                         headers =dict(K_access_token = result2['token']))
         self.assertIn(u'Meal option does not exist', response.data)
         self.assertEqual(response.status_code, 404)
+
+    def test_fail_update_meal_non_authorized(self):
+        """test that a non authorized user cannot add meal option cannot"""
 
         self.tester.post('api/v2/auth/signup',content_type='application/json',
                                    data =json.dumps( dict(email="andrew@gmail.com",
@@ -255,6 +287,18 @@ class TestMeal(unittest.TestCase):
        
         self.assertIn(u'Successfully deleted meal', response.data)
         self.assertEqual(response.status_code, 200)
+
+    def test_fail_to_delete_non_existent_meal(self):
+        """test that a non existent meal option can not be deleted by admin"""
+        login_=login(self.tester)
+        resv = json.loads(login_.data.decode())
+        self.tester.post('/api/v2/auth/Admin',headers =dict(access_token = resv['token']))
+        response = self.tester.post('/api/v2/auth/adminLogin', headers =dict(access_token = resv['token']))
+        result2 = json.loads(response.data.decode())
+        self.tester.post('/api/v2/meals/', content_type='application/json',
+                                   data =json.dumps( dict(name='Fries',
+                                                        price=5000)),
+                         headers =dict(K_access_token = result2['token']))
 
         response=self.tester.delete('/api/v2/meals/2',
                                     headers =dict(K_access_token = result2['token']))
