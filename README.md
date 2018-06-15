@@ -1,7 +1,7 @@
 # __Book-A-Meal__ 
 [![Build Status](https://travis-ci.org/matthewacha/BookAMeal.svg?branch=userEP)](https://travis-ci.org/matthewacha/BookAMeal) [![Coverage Status](https://coveralls.io/repos/github/matthewacha/BookAMeal/badge.svg?branch=userEP)](https://coveralls.io/github/matthewacha/BookAMeal?branch=userEP) [![Maintainability](https://api.codeclimate.com/v2/badges/0f81265250e64a32b7b3/maintainability)](https://codeclimate.com/github/matthewacha/BookAMeal/maintainability) [![Test Coverage](https://api.codeclimate.com/v2/badges/0f81265250e64a32b7b3/test_coverage)](https://codeclimate.com/github/matthewacha/BookAMeal/test_coverage)
 
-###__Description__
+### __Description__
 
 __Book_A_Meal__ is a web based app that enables caterers to setup 
 menus,view customer orders and also check order history, revenues for specific days. Book_A_Meal also gives customers a platform to place orders based on items on the day's menu, change their orders, and also view theirorde history.
@@ -68,28 +68,28 @@ Navigate to the following endpoints in browser `127.0.0.1:5000/endpointUrl`
 
 |EndPoint|Functionality|
 |---------|------------|
-|#####User| |
-|>POST/api/v2/auth/signup |Creates a user account|
-|>POST/api/v2/auth/login |Logs in a user|
-|#####Admin| |
-|#####Meals| |
-|>POST/api/v2/meals/|Caterer can add meal option|
-|>GET/api/v2/meals/|Caterer can get all meal options added|
-|>PUT/api/v2/meals/<meal_id>|Caterer can update a meal|
-|#####Menu| |
-|>POST/api/v2/menu/<meal_id>]|Caterer can add meal option to menu|
-|>POST/api/v2/menus/<int:meal_id>](#)|Caterer can post menu|
-|>DELETE/api/v2/menus/<menu_name>/<int:meal_id>|Caterer can delete a meal|
-|>PUT/api/v2/menus/<menu_name>|Edit menu|
-|>GET/api/v2/menus/|Caterer can get a menu|
-|>GET/api/v2/menus/<menu_name>|Caterer can get a menu|
-|>DELETE/api/v2/menus/<menu_name>/<int:meal_id>|Caterer can delete item from menu|
-|#####Orders| |
-|>POST/api/v2/orders/<meal_id>|Customer can make an order|
-|>DELETE/api/v2/orders/<int:order_id>|Customer can delete an order|
-|>GET/api/v2/orders/<menu_name>](user)
-|>POST/api/v2/orders/<menu_name>/<int:meal_id>]()
-|>GET/api/v2/orders/admin|Caterer can get all orders|
+|User| |
+| >POST/api/v2/auth/signup |Creates a user account|
+| >POST/api/v2/auth/login |Logs in a user|
+|Admin| |
+|Meals| |
+| >POST/api/v2/meals/|Caterer can add meal option|
+| >GET/api/v2/meals/|Caterer can get all meal options added|
+|PUT/api/v2/meals/<meal_id>|Caterer can update a meal|
+|Menu| |
+|POST/api/v2/menu/<meal_id>]|Caterer can add meal option to menu|
+|POST/api/v2/menus/<int:meal_id>](#)|Caterer can post menu|
+|DELETE/api/v2/menus/<menu_name>/<int:meal_id>|Caterer can delete a meal|
+|PUT/api/v2/menus/<menu_name>|Edit menu|
+|GET/api/v2/menus/|Caterer can get a menu|
+|GET/api/v2/menus/<menu_name>|Caterer can get a menu|
+|DELETE/api/v2/menus/<menu_name>/<int:meal_id>|Caterer can delete item from menu|
+|Orders| |
+|POST/api/v2/orders/<meal_id>|Customer can make an order|
+|DELETE/api/v2/orders/<int:order_id>|Customer can delete an order|
+|GET/api/v2/orders/<menu_name>](user)
+|POST/api/v2/orders/<menu_name>/<int:meal_id>]()
+|GET/api/v2/orders/admin|Caterer can get all orders|
 
 
 For more about using the API check 127.0.0.1:5000/apidocs or [`https://bookameal.herokuapp.com/apidocs/`](https://bookameal.herokuapp.com/apidocs/)
