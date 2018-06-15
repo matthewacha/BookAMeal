@@ -18,10 +18,12 @@ def login(tester):
 
 class TestMenu(unittest.TestCase):
     def setUp(self):
+        """run at the start of every test case"""
         self.tester = APP.test_client(self)
         DB.create_all()
         DB.session.commit()
     def tearDown(self):
+        """run at the end of every test case"""
         DB.drop_all()
 
     def test_create_menu(self):

@@ -170,14 +170,14 @@ class SingleMeal(Resource):
         return make_response(jsonify({"message":"Meal option does not exist"}), 404)
 
     method_decorators=[admin_required]
-    @swag_from('api-docs/update_meal.yml')#fix this
+    @swag_from('api-docs/update_meal.yml')
     def get(self, current_admin, meal_id):
         meal= Meal.query.filter_by(admin_id=current_admin.id, id=meal_id).first()
         if meal:
-            returnMeal={}
-            returnMeal["name"] = meal.name
-            returnMeal["price"] = meal.price
-            return make_response(jsonify({"Meal":returnMeal}), 200)
+            return_meal={}
+            return_meal["name"] = meal.name
+            return_meal["price"] = meal.price
+            return make_response(jsonify({"Meal":return_meal}), 200)
         return make_response(jsonify({"message":"Meal option does not exist"}), 404)
 
     method_decorators=[admin_required]
@@ -244,7 +244,7 @@ class view_menu(Resource):
         return make_response(jsonify({"message":"Menu does not exist"}), 404)
 
     method_decorators=[admin_required]
-    @swag_from('api-docs/view_menu.yml')##
+    @swag_from('api-docs/view_menu.yml')
     def put(self,current_admin,menu_name):
         menus=Menu.query.filter_by(name=menu_name).all()
         if menus:

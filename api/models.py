@@ -15,7 +15,7 @@ class User(DB.Model):
     def __init__(self,email,password,admin_status=False):
         self.email = email
         self.password = password
-        self.Admin_status = Admin_status
+        self.admin_status = admin_status
 
     @staticmethod
     def verify_input():
@@ -43,7 +43,7 @@ class User(DB.Model):
 
 
     def __repr__ (self):
-        return "id:{} email:{} Admin:{}".format(self.id, self.email, self.admin_status)
+        return "id:{} email:{} admin:{}".format(self.id, self.email, self.admin_status)
     
     def __str__(self):
         return "{}".format(self.email)
@@ -54,7 +54,7 @@ class User(DB.Model):
     def commit(self):
         DB.session.commit()
     #DB.create_all()
-class Admin(DB.Model):
+class admin(DB.Model):
     __tablename__ = 'admin'
     id = DB.Column(DB.Integer, primary_key=True)
     email = DB.Column(DB.String(60), unique=True)
@@ -64,7 +64,7 @@ class Admin(DB.Model):
     menus = DB.relationship('Menu', backref='admin')
     
     def __repr__ (self):
-        return "id:{} email:{} Admin:{} user_id:{} meals:{}".format(self.id, self.email, self.admin_status, self.user_id, self.meals)
+        return "id:{} email:{} admin:{} user_id:{} meals:{}".format(self.id, self.email, self.admin_status, self.user_id, self.meals)
     
     def __str__(self):
         return "{}".format(self.email)
