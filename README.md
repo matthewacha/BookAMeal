@@ -69,13 +69,13 @@ Navigate to the following endpoints in browser `127.0.0.1:5000/endpointUrl`
 |EndPoint|Functionality|
 |---------|------------|
 |User| |
-| >POST/api/v2/auth/signup |Creates a user account|
-| >POST/api/v2/auth/login |Logs in a user|
+| > POST/api/v2/auth/signup |Creates a user account|
+| > POST/api/v2/auth/login |Logs in a user|
 |Admin| |
 |Meals| |
-| >POST/api/v2/meals/|Caterer can add meal option|
-| >GET/api/v2/meals/|Caterer can get all meal options added|
-|PUT/api/v2/meals/<meal_id>|Caterer can update a meal|
+| > POST/api/v2/meals/|Caterer can add meal option|
+| > GET/api/v2/meals/|Caterer can get all meal options added|
+| > PUT/api/v2/meals/<meal_id>|Caterer can update a meal|
 |Menu| |
 |POST/api/v2/menu/<meal_id>]|Caterer can add meal option to menu|
 |POST/api/v2/menus/<int:meal_id>](#)|Caterer can post menu|
