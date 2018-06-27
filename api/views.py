@@ -196,13 +196,14 @@ class MenuCrud(Resource):
     method_decorators=[admin_required]
     @swag_from('api-docs/add_menu.yml')
     def post(self,current_admin, meal_id):
+        """Add a meal to a menu"""
         data = request.get_json()
-        menu_meal = Menu.query.filter_by(name=data['menu_name'], meal_id=meal_id).first()
+        menu_meal = Menu.query.filter_by(name=data['name'], meal_id=meal_id).first()
         
         if menu_meal:
             return make_response(jsonify({"message":"Meal option already exists in menu"}), 401)
         else:
-            menu_item = Menu(name=data['menu_name'], owner_id=current_admin.id,meal_id=meal_id,day=datetime.datetime.today().strftime('%d.%m.%y'),active="false")
+            menu_item = Menu(name=data['name'], owner_id=current_admin.id,meal_id=meal_id,day=datetime.datetime.today().strftime('%d.%m.%y'),active="false")
             menu_item.save()
             menu_item.commit()
             return make_response(jsonify({"message":"Successfully added to menu"}), 201)
@@ -272,11 +273,11 @@ class ActiveMenu(Resource):
     def get(self,current_admin):
         menu_meals=Menu.query.filter_by(owner_id=current_admin.id, active="true").all()
         menu_list=[]
-	if menuMeals:
-	    for meanu_meal in menu_meals:
+	if menu_meals:
+	    for menu_meal in menu_meals:
 		output={}
-		output['state'] = meanu_meal.active
-                output['id'] = meanu_meal.id
+		output['state'] = menu_meal.active
+                output['id'] = menu_meal.id
                 output['name'] = menu_meal.name
                 output['admin_id'] = menu_meal.owner_id
                 output['meal_id'] = menu_meal.meal_id

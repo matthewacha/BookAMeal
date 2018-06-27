@@ -49,10 +49,10 @@ class TestOrders(unittest.TestCase):
         
         """post to day's menu"""
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/1',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
 
         #make an order
@@ -71,10 +71,10 @@ class TestOrders(unittest.TestCase):
         
         """post to day's menu"""
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/1',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
 
         #make an order
@@ -93,10 +93,10 @@ class TestOrders(unittest.TestCase):
         
         """post to day's menu"""
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/1',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
 
         response=self.tester.post('/api/v2/orders/Chillax/2',
@@ -112,10 +112,10 @@ class TestOrders(unittest.TestCase):
         
         """post to day's menu"""
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/1',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
 
         response=self.tester.post('/api/v2/orders/Special/3',
@@ -131,10 +131,10 @@ class TestOrders(unittest.TestCase):
         
         """post to day's menu"""
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/1',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
 
         response=self.tester.post('/api/v2/orders/Special/3',
@@ -150,10 +150,10 @@ class TestOrders(unittest.TestCase):
         
         """post to day's menu"""
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/1',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
 
         response=self.tester.post('/api/v2/orders/Special/3',
@@ -169,10 +169,10 @@ class TestOrders(unittest.TestCase):
         
         #post to day's menu
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/1',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
 
         #make an order
@@ -198,10 +198,10 @@ class TestOrders(unittest.TestCase):
         
         #post today's menu
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/1',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
 
         #make an order
@@ -222,10 +222,10 @@ class TestOrders(unittest.TestCase):
         
         #post to day's menu
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/1',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
 
         #make an order
@@ -265,10 +265,10 @@ class TestOrders(unittest.TestCase):
                                                         price=15000)),
                          headers =dict(access_token = result2['token']))
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/3',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')), headers =dict(K_access_token = result2['token']))
+        data = json.dumps(dict(name='Special')), headers =dict(K_access_token = result2['token']))
 
         rv = self.tester.get('/api/v2/orders/admin', headers =dict(K_access_token = result2['token']))
         rvs = json.loads(rv.data.decode())
@@ -298,10 +298,10 @@ class TestOrders(unittest.TestCase):
                                                         price=15000)),
                          headers =dict(access_token = result2['token']))
         self.tester.post('/api/v2/menus/2',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')),
+        data = json.dumps(dict(name='Special')),
                          headers =dict(K_access_token = result2['token']))
         self.tester.post('/api/v2/menus/3',content_type='application/json',
-        data = json.dumps(dict(menu_name='Special')), headers =dict(K_access_token = result2['token']))
+        data = json.dumps(dict(name='Special')), headers =dict(K_access_token = result2['token']))
 
         self.tester.post('/api/v2/orders/Special/3',
                                   headers =dict(access_token = result['token']))
