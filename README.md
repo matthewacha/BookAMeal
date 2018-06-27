@@ -87,10 +87,9 @@ Below is a list of endpoints
 |GET/api/v2/menus/<menu_name>|Caterer can get a menu|
 |DELETE/api/v2/menus/<menu_name>/<int:meal_id>|Caterer can delete item from menu|
 | __Orders__ | |
-|POST/api/v2/orders/<meal_id>|Customer can make an order|
+|POST/api/v2/orders/<menu_name>/<int:meal_id>]|Customer can make an order from specific menu|
 |DELETE/api/v2/orders/<int:order_id>|Customer can delete an order|
-|GET/api/v2/orders/<menu_name>](user)
-|POST/api/v2/orders/<menu_name>/<int:meal_id>]()
+|GET/api/v2/orders/<menu_name>]|Customer can view orders|
 |GET/api/v2/orders/admin|Caterer can get all orders|
 
 
