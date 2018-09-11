@@ -9,7 +9,7 @@ from flask_cors import CORS
 def create_app(dev_state):
     if dev_state == 'Development':
         APP = Flask(__name__)
-        APP.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI', "postgresql://matthewacha:password@localhost/BookAMeal")
+        APP.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI', "postgresql://matthewacha:password@localhost/BookAMeal")
         print('working....')
         APP.config.from_object("config")
         APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
