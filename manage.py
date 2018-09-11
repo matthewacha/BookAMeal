@@ -35,6 +35,6 @@ def run_app():
     """Starts the server and debugs with the shell"""
     
     APP.run(host='bookameal1.herokuapp.com', debug=True)
-application = APP.run(host='bookameal1.herokuapp.com', debug=True)
+application = APP.run(debug=True)
 if __name__ == '__main__':
     MANAGER.run()
