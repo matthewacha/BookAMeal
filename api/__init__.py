@@ -38,13 +38,13 @@ def create_app(dev_state):
                         {
                             'name': 'Order',
                             'description': 'Meal request made by clients'}]}
+        CORS(APP)
 
         return APP
 
-   
+
 APP = create_app('Development')
 SWAGGER = Swagger(APP)
-CORS(APP)
 DB = SQLAlchemy(APP)
 DB.init_app(APP) 
 
