@@ -1,1 +1,1 @@
-web: python manage.py run_app --bind 127.0.0.1:5000
+web: gunicorn --bind 127.0.0.1:5000 python manage.py run_app 
