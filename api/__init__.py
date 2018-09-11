@@ -9,6 +9,7 @@ from flask_cors import CORS
 def create_app(dev_state):
     if dev_state == 'Development':
         APP = Flask(__name__)
+        CORS(APP)
         APP.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', "postgresql://matthewacha:password@localhost/BookAMeal")
         print('working....')
         APP.config.from_object("config")
@@ -40,7 +41,7 @@ def create_app(dev_state):
                             'description': 'Meal request made by clients'}]}
         
 
-        return CORS(APP)
+        return APP
 
 
 APP = create_app('Development')
