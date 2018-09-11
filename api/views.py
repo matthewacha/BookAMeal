@@ -83,7 +83,7 @@ class login(Resource):
                 "exp": datetime.datetime.utcnow() + datetime.timedelta(days = 0, minutes = 45),
                 "iat": datetime.datetime.utcnow(),
                 "sub": user.id}, SECRET_KEY, algorithm = 'HS256')
-            return jsonify({'token':token})
+            return jsonify({'token':token.decode('unicode_escape')})
         else:
             return make_response((jsonify({"message":"Authorize with correct password"})), 401)
         
@@ -173,7 +173,7 @@ class adminLogin(Resource):
                     "exp": datetime.datetime.utcnow() + datetime.timedelta(days = 0, minutes = 45),
                     "iat": datetime.datetime.utcnow(),
                     "sub": admin_user.id}, SECRET_KEY, algorithm = 'HS256')
-                return jsonify({'token':token})
+                return jsonify({'token':token.decode('unicode_escape')})
         return make_response((jsonify({"message":"Sorry, you are not authorized"})), 401)
 
     # method_decorators=[token_required]

@@ -29,7 +29,7 @@ class User(DB.Model):
             return make_response((jsonify({"message":"Please input a string"})), 401)
         if auth['email'].strip() == '':
             return make_response(jsonify({'message':"You cannot send an empty string"}), 401)
-        if isinstance(auth['password'],unicode):
+        if isinstance(auth['password'],str):
             if auth['password'].strip() == '':
                 return make_response(jsonify({'message':"You cannot send an empty string"}), 401)
         if '@' not in auth['email'][:-4]:
@@ -94,13 +94,13 @@ class Meal(DB.Model):
         characters= re.compile('[!#$%&*+-.^_`|~:<>,0-9]')
         if not name and not price:
             return make_response(jsonify({'message':"Please send a json object containing name and price"}), 401)
-        if type(price) == unicode:
+        if type(price) == str:
             try:
                 map(int, price.split())
                 #return make_response(jsonify({'message':"Please put in an integer"}), 401)
             except ValueError:
                 return make_response(jsonify({'message':"Please put in an integer"}), 401)
-        if type(name) != unicode:
+        if type(name) != str:
             return make_response(jsonify({'message':"Please input a string"}), 401)
         if characters.match(name):
             return make_response(jsonify({'message':"None alpha-numeric input"}), 401)
