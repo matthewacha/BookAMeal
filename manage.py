@@ -33,7 +33,8 @@ def cover():
 @MANAGER.command
 def run_app():
     """Starts the server and debugs with the shell"""
-    APP.run(debug=True)
+    
+    APP.run(host="0.0.0.0", debug=True)
 
 if __name__ == '__main__':
     MANAGER.run()
