@@ -38,9 +38,9 @@ def create_app(dev_state):
                         {
                             'name': 'Order',
                             'description': 'Meal request made by clients'}]}
-        CORS(APP)
+        
 
-        return APP
+        return CORS(APP)
 
 
 APP = create_app('Development')
