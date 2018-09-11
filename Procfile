@@ -1,1 +1,1 @@
-worker: gunicorn --bind 127.0.0.1:5000 manage run_app 
+web: gunicorn --bind 41.210.172.102:5000 manage run_app 
