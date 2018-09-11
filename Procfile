@@ -1,1 +1,1 @@
-web: gunicorn --bind 41.210.172.102:5000 manage run_app 
+web: gunicorn --bind bookameal1.herokuapp.com:5000 manage run_app 

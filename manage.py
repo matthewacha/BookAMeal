@@ -34,7 +34,7 @@ def cover():
 def run_app():
     """Starts the server and debugs with the shell"""
     
-    APP.run(debug=True)
+    APP.run(host='bookameal1.herokuapp.com', debug=True)
 application = run_app
 if __name__ == '__main__':
     MANAGER.run()
