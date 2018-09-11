@@ -5,6 +5,7 @@ def create_app(dev_state):
         SQLALCHEMY_DATABASE_URI = "postgresql://matthewacha:password@localhost/BookAMeal"
         SQLALCHEMY_TRACK_MODIFICATIONS = False
         SECRET_KEY = 'VX-4178-WD-3429-MZ-31'
+        print('working....')
     else:
         SECRET_KEY = 'VX-4178-WD-3429-MZ-31'
 

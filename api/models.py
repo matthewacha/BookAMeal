@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request, make_response
 from sqlalchemy import Column, ForeignKey, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 from api import DB
+import json
 import datetime
 
 class User(DB.Model):
@@ -12,6 +13,7 @@ class User(DB.Model):
     password = DB.Column(DB.String(300))
     admin_status = DB.Column(DB.Boolean, default=False)
     orders = DB.relationship('Order', backref='user')
+    admin = DB.relationship('Admin', backref='user')
     def __init__(self,email,password,admin_status=False):
         self.email = email
         self.password = password
@@ -57,17 +59,18 @@ class User(DB.Model):
 class Admin(DB.Model):
     __tablename__ = 'admin'
     id = DB.Column(DB.Integer, primary_key=True)
+    name = DB.Column(DB.String, unique = True)
     email = DB.Column(DB.String(60), unique=True)
-    user_id = DB.Column(DB.Integer)
+    user_id = DB.Column(DB.Integer, ForeignKey('user.id'))
+    location = DB.Column(DB.String(60))
+    phone_contact = DB.Column(DB.String(100))
     admin_status = DB.Column(DB.Boolean, default=True)
     meals = DB.relationship('Meal', backref='admin')
     menus = DB.relationship('Menu', backref='admin')
     
-    def __repr__ (self):
-        return "id:{} email:{} admin:{} user_id:{} meals:{}".format(self.id, self.email, self.admin_status, self.user_id, self.meals)
     
     def __str__(self):
-        return "{}".format(self.email)
+        return self.email
 
     def save(self):
         DB.session.add(self)
@@ -78,7 +81,7 @@ class Admin(DB.Model):
 class Meal(DB.Model):
     __tablename__ = 'meal'
     id = DB.Column(DB.Integer, primary_key=True)
-    name = DB.Column(DB.String(60), nullable = False, unique = True)
+    name = DB.Column(DB.String(60), nullable = False, unique = False)
     price = DB.Column(DB.Integer, nullable = False)
     admin_id = DB.Column(DB.Integer, DB.ForeignKey('admin.id'))
     menus = DB.relationship('Menu', backref='meal')
@@ -114,10 +117,10 @@ class Meal(DB.Model):
         DB.session.commit()
 
     def __repr__(self):
-        return 'id:{} name:{} price:{} adminId:{}'.format(self.id, self.name, self.price, self.admin_id)
+        return u"id:{} name:{} price:{} adminId:{}".format(self.id, self.name, self.price, self.admin_id)
     
-    def __str__(self):
-        return 'id:{} '.format(self.id)
+    # def __str__(self):
+    #     return 'id:{} '.format(self.id)
 
 class Menu(DB.Model):
     __tablename__ = 'menu'
@@ -149,11 +152,11 @@ class Menu(DB.Model):
 class Order(DB.Model):
     __tablename__ = 'order'
     id = DB.Column(DB.Integer, primary_key=True)
-    menu_name = DB.Column(DB.Integer, DB.ForeignKey('menu.name')) 
-    meal_id = DB.Column(DB.Integer)
+    menu_id = DB.Column(DB.Integer, DB.ForeignKey('menu.id')) 
     admin_id = DB.Column(DB.Integer)
     time_created = DB.Column(DB.String)
     customer_id = DB.Column(DB.Integer, DB.ForeignKey('user.id'))
+    status = DB.Column(DB.String(20), default = "processing")
 
     def save(self):
         DB.session.add(self)
@@ -163,6 +166,12 @@ class Order(DB.Model):
         
     def commit(self):
         DB.session.commit()
+
+    def show_time(self):
+        print(self.time_created)
+        time= datetime.datetime.now()-self.time_created
+        return time
+    
 
     def __repr__(self):
         return "id:{} menu_id:{} customer_id:{}".format(self.id, self.menu_id, self.customer_id)
