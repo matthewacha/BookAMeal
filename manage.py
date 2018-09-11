@@ -35,6 +35,6 @@ def run_app():
     """Starts the server and debugs with the shell"""
     
     APP.run(debug=True)
-
+application = run_app
 if __name__ == '__main__':
     MANAGER.run()
