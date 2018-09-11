@@ -1,2 +1,2 @@
 from manage import run_app
-app = runapp()
+app = run_app()
