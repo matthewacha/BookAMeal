@@ -34,7 +34,7 @@ def cover():
 def run_app():
     """Starts the server and debugs with the shell"""
     
-    APP.run(host="0.0.0.0", debug=True)
+    APP.run(debug=True)
 
 if __name__ == '__main__':
     MANAGER.run()
