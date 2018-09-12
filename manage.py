@@ -36,6 +36,7 @@ def run_app():
     
     APP.run(host='bookameal1.herokuapp.com', debug=True)
 port = os.getenv('PORT', 8322)
-application = APP.run(port = port, debug=False)
+host = os.getenv('HOST', '127.0.0.1')
+application = APP.run(host=host, port = port, debug=False)
 if __name__ == '__main__':
     MANAGER.run()
