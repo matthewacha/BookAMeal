@@ -1,3 +1,3 @@
-from manage import run_app
+from api import APP
 if __name__ == '__main__':
-    run_app()
+    APP.run(debug=True)
