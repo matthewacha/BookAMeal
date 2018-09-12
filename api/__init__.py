@@ -51,7 +51,7 @@ def create_app(dev_state):
             """ Always reply 200 on OPTIONS request """
 
             if request.method == 'OPTIONS':
-                resp = app.make_default_options_response()
+                resp = APP.make_default_options_response()
 
                 headers = None
                 if 'ACCESS_CONTROL_REQUEST_HEADERS' in request.headers:
