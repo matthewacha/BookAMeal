@@ -1,6 +1,6 @@
 """Initialize the app"""
 import os
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger
 from flask_cors import CORS
@@ -9,7 +9,12 @@ from flask_cors import CORS
 def create_app(dev_state):
     if dev_state == 'Development':
         APP = Flask(__name__)
-        CORS(APP)
+        CORS(APP,resources={r"/api/*": {"origins": "*"}},
+        methods='GET, POST, PUT, DELETE, OPTIONS',
+        allow_headers=["Content-Type",
+                       "K_access_token",
+                       "access_token",
+                       "Access-Control-Allow-Credentials"],)
         APP.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', "postgresql://matthewacha:password@localhost/BookAMeal")
         APP.config.from_object("config")
         APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
