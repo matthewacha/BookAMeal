@@ -65,7 +65,7 @@ class signup(Resource):
         """Add user to database"""
         new_user.save()
         new_user.commit()
-        return make_response((jsonify({"message":"Successfully signed up"})), 201)
+        return make_response((jsonify({"message":"Successfully signed up"}).headers.add('Access-Control-Allow-Origin', '*')), 201)
     
 class login(Resource):
     @swag_from('api-docs/login.yml')
