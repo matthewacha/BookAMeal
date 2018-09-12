@@ -11,7 +11,6 @@ def create_app(dev_state):
         APP = Flask(__name__)
         CORS(APP)
         APP.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', "postgresql://matthewacha:password@localhost/BookAMeal")
-        print('working....')
         APP.config.from_object("config")
         APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         APP.config['SQLALCHEMY_BINDS'] = None
@@ -39,6 +38,19 @@ def create_app(dev_state):
                         {
                             'name': 'Order',
                             'description': 'Meal request made by clients'}]}
+
+        @APP.after_request
+        def add_cors(resp):
+            """
+            Ensure all responses have the CORS headers.
+            This ensures any failures are also accessible by the client.
+            """
+            resp.headers['Access-Control-Allow-Origin'] = request.headers.get('Origin','*')
+            resp.headers['Access-Control-Allow-Credentials'] = 'true'
+            resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET, PUT, DELETE'
+            resp.headers['Access-Control-Allow-Headers'] = request.headers.get(
+                'Access-Control-Request-Headers', 'Authorization')
+            return resp
         
 
         return APP
