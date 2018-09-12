@@ -14,7 +14,8 @@ def create_app(dev_state):
         allow_headers=["Content-Type",
                        "K_access_token",
                        "access_token",
-                       "Access-Control-Allow-Credentials"],)
+                       "Access-Control-Allow-Credentials"],
+        supports_credentials = True)
         APP.config['CORS_HEADERS'] = 'Content-Type'
         APP.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', "postgresql://matthewacha:password@localhost/BookAMeal")
         APP.config.from_object("config")
